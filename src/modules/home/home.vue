@@ -1,6 +1,6 @@
 <template>
   <div>
-    HOME
+    <router-link to="/login">到登录页</router-link>
   </div>
 </template>
 
