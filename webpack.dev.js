@@ -20,10 +20,7 @@ var config = {
       })
     },{
       test: /\.less$/,
-      use: ExtractTextPlugin.extract({  //将less抽取到公共css文件中
-        use: 'css-loader!less-loader',
-        fallback: 'style-loader'
-      })
+      use: ['style-loader', 'css-loader', 'less-loader']  //这里为了能热更新less不抽取到公共css
     }, {
       test: /\.vue$/,
       loader: 'vue-loader',
@@ -42,8 +39,11 @@ var config = {
       loader: 'babel-loader',
       exclude: /node_modules/
     }, {
-      test: /\.(gif|jpg|png|woff|svf|eot|tff)\??.*$/,
+      test: /\.(gif|jpg|png)\??.*$/,
       loader: 'url-loader?limit=1024'
+    }, {
+      test: /\.(woff|woff2|svg|eot|ttf)\??.*$/,
+      loader: 'file-loader'
     }]
   },
   plugins: [
