@@ -1,8 +1,8 @@
 <template>
   <div class="tip-input-box">
     <p v-if="label" v-text="label" @click="clickPlaceholder" :class="textClass"></p>
-    <input v-on="inputListeners" :value="value" :title="value" :type="type" ref="input">
-    <tip-input-message :value="value" :rules="rules" :is-focused="isFocused"></tip-input-message>
+    <input v-on="inputListeners" :value="value" :title="value" :type="type" :class="{'unactive': !isFocused || !isChecked, 'active': isActive, 'success': isChecked && !isActive && !hasError, 'fail': isChecked && !isActive && hasError}" ref="input">
+    <tip-input-message :value="value" :rules="rules" :is-focused="isFocused" :lazy-check="lazyCheck" @check-complete="onCheckComplete" @check-success="onCheckSuccess" @check-fail="onCheckFail"></tip-input-message>
   </div>
 </template>
 
@@ -26,13 +26,31 @@ export default {
     rules: {
       type: Array,
       default: Array
+    },
+    // 是否懒校验
+    lazyCheck: {
+      type: Boolean
+    },
+    // 校验完成时执行的方法
+    checkComplete: {
+      type: Function
+    },
+    // 校验通过时执行的方法
+    checkSuccess: {
+      type: Function
+    },
+    // 校验完不通过执行的方法
+    checkFail: {
+      type: Function
     }
   },
   data () {
     return {
       textClass: 'placeholder',
       isActive: false,
-      isFocused: false
+      isFocused: false,
+      hasError: false,
+      isChecked: false
     }
   },
   methods: {
@@ -46,6 +64,18 @@ export default {
       } else {
         this.textClass = 'placeholder';
       }
+    },
+    onCheckComplete (state, checkResult) {
+      this.isChecked = true;
+      this.$emit('check-complete', state, checkResult);
+    },
+    onCheckSuccess (checkResult) {
+      this.hasError = false;
+      this.$emit('check-complete', checkResult);
+    },
+    onCheckFail (checkResult) {
+      this.hasError = true;
+      this.$emit('check-fail', checkResult);
     }
   },
   mounted () {
@@ -100,8 +130,17 @@ export default {
       font-size: 16px;
       padding-left: 5px;
       outline: none;
+      &.unactive {
+        border-color: #ccc;
+      }
       &.active {
         border-color: skyblue;
+      }
+      &.success {
+        border-color: green;
+      }
+      &.fail {
+        border-color: red;
       }
     }
     .placeholder {

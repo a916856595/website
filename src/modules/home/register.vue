@@ -1,7 +1,7 @@
 <template>
   <div class="w">
     <div class="register-content">
-      <tip-input label="请输入账号" v-model="registerInfo.account" @change="change" :rules="accountRules"></tip-input>
+      <tip-input label="请输入账号" v-model="registerInfo.account" disabled @change="change" @check-complete="finish" @check-success="success" @check-fail="fail" :rules="accountRules" lazy-check></tip-input>
       <tip-input type="password" label="请输入密码" v-model="registerInfo.password"></tip-input>
       <tip-input type="password" label="请再次输入密码" v-model="registerInfo.passwordRepeat"></tip-input>
     </div>
@@ -21,22 +21,36 @@ export default {
       accountRules: [{
         message: '不能包含1',
         rule: function (value) {
-          if (value.indexOf('1') > -1) return false;
-          return true;
-        }
+          return new Promise(function (resolve, reject) {
+            setTimeout(function () {
+              if (value.indexOf('1') > -1) {
+                reject();
+              } else {
+                resolve();
+              }
+            }, 2000)
+          })
+        },
+        isAsync: true
       },
       {
-        message: '不能包含2',
-        rule: function (value) {
-          if (value.indexOf('2') > -1) return false;
-          return true;
-        }
+        message: '必须包含2',
+        rule: /2/
       }]
     }
   },
   methods: {
     change () {
       console.log(this.registerInfo.account)
+    },
+    finish (state, checkResult) {
+      console.log('finish', state, checkResult);
+    },
+    success (checkResult) {
+      console.log('success', checkResult);
+    },
+    fail (checkResult) {
+      console.log('fail', checkResult);
     }
   },
   mounted () {

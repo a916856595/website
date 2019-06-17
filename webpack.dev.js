@@ -4,6 +4,7 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 var config = {
+  devtool: 'cheap-module-source-map',
   entry: {
     main: path.join(__dirname, 'main.js')
   },

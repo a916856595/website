@@ -7,10 +7,13 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import App from './app.vue';
 import routers from './routers.js';
+import methodsConstructor from './src/lib/easy.js';
 
 Vue.use(VueRouter);
 // 创建全局变量
 global.GLOBAL = GLOBAL;
+// 创建全局方法
+global.__ = new methodsConstructor();
 
 // 自动注册全局基础组件
 autoRegisterBaseComponents();
