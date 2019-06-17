@@ -1,7 +1,7 @@
 <template>
   <div class="tip-input-box">
     <p v-if="label" v-text="label" @click="clickPlaceholder" :class="textClass"></p>
-    <input v-on="inputListeners" :value="value" :title="value" :type="type" :class="{'unactive': !isFocused || !isChecked, 'active': isActive, 'success': isChecked && !isActive && !hasError, 'fail': isChecked && !isActive && hasError}" ref="input">
+    <input v-on="inputListeners" :value="value" :title="value" :type="type" :class="{'unactive': !isFocused || (value ==='' && !notEmpty), 'active': isActive, 'success': isChecked && !isActive && !hasError, 'fail': isChecked && !isActive && hasError && !(value ==='' && !notEmpty)}" ref="input">
     <tip-input-message :value="value" :rules="rules" :is-focused="isFocused" :lazy-check="lazyCheck" @check-complete="onCheckComplete" @check-success="onCheckSuccess" @check-fail="onCheckFail"></tip-input-message>
   </div>
 </template>
@@ -21,6 +21,11 @@ export default {
     type: {
       type: String,
       default: 'text'
+    },
+    // 是否允许空值
+    notEmpty: {
+      type: Boolean,
+      default: false
     },
     // 校验规则列表
     rules: {
