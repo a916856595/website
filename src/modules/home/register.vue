@@ -28,7 +28,7 @@ export default {
               } else {
                 resolve();
               }
-            }, 2000)
+            }, 3000)
           })
         },
         isAsync: true
@@ -36,6 +36,12 @@ export default {
       {
         message: '必须包含2',
         rule: /2/
+      }, {
+        message: '最少五个字符',
+        rule: /^[\s\S]{5,}$/
+      }, {
+        message: '最多六个字符',
+        rule: /^[\s\S]{0,6}$/
       }]
     }
   },

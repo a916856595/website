@@ -17,7 +17,7 @@ const infoCode = 0;
 const successCode = 1;
 const failCode = 2;
 const loadingCode = 3;
-const lazyCheckInterval = 200; //懒校验的时间间隔
+const lazyCheckInterval = 500; //懒校验的时间间隔
 var timer = null;
 
 export default {
