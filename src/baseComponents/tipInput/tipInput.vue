@@ -88,6 +88,8 @@ export default {
       this.$emit('check-fail', checkResult);
     },
     updateInputMessageComponent () {
+      this.isFocused = true;
+      this.isChecked = true;
       this.$children.filter(item => item.$options.name === 'tip-input-message')[0].checkRules();  //由于是独立组件，直接获取子组件的方法
     }
   },

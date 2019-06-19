@@ -1,15 +1,18 @@
 <template>
   <div class="w">
     <div class="register-content">
-      <tip-input-box check-for="id">
-        <tip-input label="请输入账号" v-model="registerInfo.account" disabled @change="change" @check-complete="finish" :rules="accountRules" lazy-check></tip-input>
+      <tip-input-box>
+        <tip-input label="请输入账号" v-model="registerInfo.account" disabled @change="change" @check-complete="finish" :rules="accountRules" lazy-check not-empty></tip-input>
         <tip-input type="password" label="请输入密码" v-model="registerInfo.password" :rules="passwordRules" lazy-check></tip-input>
         <div>
           <p>
             <tip-input type="password" label="请再次输入密码" v-model="registerInfo.passwordRepeat" :rules="passwordRepeatRules" lazy-check></tip-input>
           </p>
         </div>
-        <button id="id">点击校验</button>
+        
+        <tip-input-submit>
+          <button type="submit">点击校验</button>
+        </tip-input-submit>
       </tip-input-box>
     </div>
   </div>

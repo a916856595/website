@@ -70,15 +70,13 @@ export default {
       this.isIncludeError = false;
       this.rulesResult = Array.apply(null, { length: this.rules.length }).map(() => infoCode);
       this.resetMessage();
-      if (this.value !== '') {
-        this.rules.forEach((rule, ruleIndex) => {
-          if (rule.isAsync) {
-            this.checkRuleAsync(rule, ruleIndex);
-          } else {
-            this.checkRuleSync(rule, ruleIndex);
-          }
-        });
-      }
+      this.rules.forEach((rule, ruleIndex) => {
+        if (rule.isAsync) {
+          this.checkRuleAsync(rule, ruleIndex);
+        } else {
+          this.checkRuleSync(rule, ruleIndex);
+        }
+      });
     },
     checkRuleSync(rule, ruleIndex) {
       var result;
@@ -133,6 +131,7 @@ export default {
         } else {
           this.$emit('check-success', checkResult);
         }
+        console.log('comp')
         this.$emit('check-complete',!this.isIncludeError, checkResult);
       }
     }

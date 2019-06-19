@@ -7,8 +7,10 @@
 <script>
 export default {
   name: 'tip-input-box',
-  created () {
-    console.log(this.$children.filter(item => item.$options.name === 'tip-input'))
+  methods: {
+    checkAllChildren () {
+      this.$children.filter(item => item.$options.name === 'tip-input').forEach(item => item.updateInputMessageComponent());
+    }
   }
 }
 </script>
