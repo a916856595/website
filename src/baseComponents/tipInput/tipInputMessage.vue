@@ -6,7 +6,7 @@
       <ul class="tip-list" v-if="isFocused">
         <li v-for="(rule, index) in rules" :key="index">
           <i :class="['icon', 'iconfont', returnIconClass(index)]"></i>
-          <span v-text="rule.message"></span>
+          <span v-text="rule.messageToShow"></span>
         </li>
       </ul>
   </transition>
@@ -17,8 +17,6 @@ const infoCode = 0;
 const successCode = 1;
 const failCode = 2;
 const loadingCode = 3;
-const lazyCheckInterval = 500; //懒校验的时间间隔
-var timer = null;
 
 export default {
   name: 'tip-input-message',
@@ -26,7 +24,6 @@ export default {
     value: {},
     isFocused: {},
     rules: {},
-    lazyCheck: {},
     checkComplete: {
       type: Function
     },
@@ -62,17 +59,26 @@ export default {
         return this.rulesResult[index] ? 'iconcheck-circle-fill' : 'iconclose-circle-fill';
       }
     },
+    resetMessage () {
+      __.forEach(this.rules, (item, index) => {
+        item.messageToShow = item.message;
+        this.rules.splice(index, 1, item);  //这里需要显式的更新一下数组，否则messageToShow不会更新
+      });
+    },
     checkRules () {
       this.countOfCheckComplete = 0;
       this.isIncludeError = false;
       this.rulesResult = Array.apply(null, { length: this.rules.length }).map(() => infoCode);
-      this.rules.forEach((rule, ruleIndex) => {
-        if (rule.isAsync) {
-          this.checkRuleAsync(rule, ruleIndex);
-        } else {
-          this.checkRuleSync(rule, ruleIndex);
-        }
-      });
+      this.resetMessage();
+      if (this.value !== '') {
+        this.rules.forEach((rule, ruleIndex) => {
+          if (rule.isAsync) {
+            this.checkRuleAsync(rule, ruleIndex);
+          } else {
+            this.checkRuleSync(rule, ruleIndex);
+          }
+        });
+      }
     },
     checkRuleSync(rule, ruleIndex) {
       var result;
@@ -81,7 +87,14 @@ export default {
         if (result === failCode) this.isIncludeError = true;
         this.checkCompleteState();
       } else if (__.isFunction(rule.rule)) {
-        result = rule.rule(this.value) ? successCode : failCode;
+        var resultOfCheck = rule.rule(this.value);
+        if (__.isObject(resultOfCheck)) {
+          result = resultOfCheck.result ? successCode : failCode;
+          rule.messageToShow = resultOfCheck.message;
+          this.rules.splice(ruleIndex, 1, rule);
+        } else {
+          result = resultOfCheck ? successCode : failCode;
+        }
         if (result === failCode) this.isIncludeError = true;
         this.checkCompleteState();
       } else {
@@ -92,15 +105,16 @@ export default {
     checkRuleAsync(rule, ruleIndex) {
       const vm = this;
       this.rulesResult.splice(ruleIndex, 1, loadingCode);
-      var result;
       if (__.isFunction(rule.rule)) {
-        rule.rule(this.value).then(function () {
+        rule.rule(this.value).then(function (message) {
           vm.rulesResult.splice(ruleIndex, 1, successCode);
           vm.checkCompleteState();
-        }, function () {
+          if (message) rule.messageToShow = message;
+        }, function (message) {
           vm.rulesResult.splice(ruleIndex, 1, failCode);
           vm.isIncludeError = true;
           vm.checkCompleteState();
+          if (message) rule.messageToShow = message;
         });
       } else {
         throw new Error('异步rule字段应提供一个返回Promise校验函数');
@@ -124,21 +138,7 @@ export default {
     }
   },
   mounted () {
-
-  },
-  watch: {
-    value () {
-      if (this.lazyCheck) {
-        if (timer) clearTimeout(timer);
-        timer = null;
-        timer = setTimeout(() => {
-          this.checkRules();
-          timer = null;
-        }, lazyCheckInterval);
-      } else {
-        this.checkRules();
-      }
-    }
+    this.resetMessage();
   }
 }
 </script>

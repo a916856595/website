@@ -1,9 +1,16 @@
 <template>
   <div class="w">
     <div class="register-content">
-      <tip-input label="请输入账号" v-model="registerInfo.account" disabled @change="change" @check-complete="finish" @check-success="success" @check-fail="fail" :rules="accountRules" lazy-check></tip-input>
-      <tip-input type="password" label="请输入密码" v-model="registerInfo.password"></tip-input>
-      <tip-input type="password" label="请再次输入密码" v-model="registerInfo.passwordRepeat"></tip-input>
+      <tip-input-box check-for="id">
+        <tip-input label="请输入账号" v-model="registerInfo.account" disabled @change="change" @check-complete="finish" :rules="accountRules" lazy-check></tip-input>
+        <tip-input type="password" label="请输入密码" v-model="registerInfo.password" :rules="passwordRules" lazy-check></tip-input>
+        <div>
+          <p>
+            <tip-input type="password" label="请再次输入密码" v-model="registerInfo.passwordRepeat" :rules="passwordRepeatRules" lazy-check></tip-input>
+          </p>
+        </div>
+        <button id="id">点击校验</button>
+      </tip-input-box>
     </div>
   </div>
 </template>
@@ -12,6 +19,7 @@
 import { setInterval } from 'timers';
 export default {
   data () {
+    var vm = this;
     return {
       registerInfo: {
         account: '',
@@ -19,35 +27,39 @@ export default {
         passwordRepeat: ''
       },
       accountRules: [{
-        message: '不能包含1',
-        rule: function (value) {
-          return new Promise(function (resolve, reject) {
-            setTimeout(function () {
-              if (value.indexOf('1') > -1) {
-                reject();
-              } else {
-                resolve();
-              }
-            }, 3000)
-          })
-        },
-        isAsync: true
-      },
-      {
-        message: '必须包含2',
-        rule: /2/
+        message: '账号的长度不能低于6',
+        rule: /^[\s\S]{6,}$/
       }, {
-        message: '最少五个字符',
-        rule: /^[\s\S]{5,}$/
+        message: '账号的长度不能超过18',
+        rule: /^[\s\S]{0,18}$/
+      }],
+      passwordRules: [{
+        message: '密码的长度不能低于9',
+        rule: /^[\s\S]{6,}$/
       }, {
-        message: '最多六个字符',
-        rule: /^[\s\S]{0,6}$/
+        message: '密码的长度不能超过18',
+        rule: /^[\s\S]{0,18}$/
+      }],
+      passwordRepeatRules: [{
+        message: '密码的长度不能低于9',
+        rule: /^[\s\S]{6,}$/
+      }, {
+        message: '密码的长度不能超过18',
+        rule: /^[\s\S]{0,18}$/
+      }, {
+        message: '两次密码输入必须一致',
+        rule () {
+          if (vm.registerInfo.password === vm.registerInfo.passwordRepeat) {
+            return { result: true, message: '两次密码输入一致'};
+          }
+          return { result: false, message: '两次密码输入不一致'};
+        }
       }]
     }
   },
   methods: {
-    change () {
-      console.log(this.registerInfo.account)
+    change ($event) {
+
     },
     finish (state, checkResult) {
       console.log('finish', state, checkResult);
@@ -57,6 +69,9 @@ export default {
     },
     fail (checkResult) {
       console.log('fail', checkResult);
+    },
+    input (event) {
+      console.log('input outer')
     }
   },
   mounted () {

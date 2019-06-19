@@ -7,6 +7,8 @@
 </template>
 
 <script>
+let timer = null;
+
 export default {
   name: 'tip-input',
   props: {
@@ -28,14 +30,17 @@ export default {
       default: false
     },
     // 校验规则列表
+    // item: {
+      // message: '提示文本',
+      // rule: 正则或返回true/false的校验函数,如果是异步校验需要返回Promise
+      // isAsync: Bealoon,是否为异步校验
+    // }
     rules: {
       type: Array,
       default: Array
     },
-    // 是否懒校验
-    lazyCheck: {
-      type: Boolean
-    },
+    // 是否懒校验,传入具体数字设置输入的校验间隔,没有传参则失焦校验,没有该属性输入时立即校验
+    lazyCheck: {},
     // 校验完成时执行的方法
     checkComplete: {
       type: Function
@@ -81,6 +86,9 @@ export default {
     onCheckFail (checkResult) {
       this.hasError = true;
       this.$emit('check-fail', checkResult);
+    },
+    updateInputMessageComponent () {
+      this.$children.filter(item => item.$options.name === 'tip-input-message')[0].checkRules();  //由于是独立组件，直接获取子组件的方法
     }
   },
   mounted () {
@@ -102,14 +110,35 @@ export default {
         blur (event) {
           vm.value ? null : vm.textClass = 'placeholder';
           vm.isActive = false;
+          if (vm.lazyCheck === '') {
+            vm.updateInputMessageComponent();  //当组件有lazy-check属性而没有赋值的时候在失焦时校验
+          }
           vm.$emit('blur', event);
-        }
+        },
       })
     }
   },
   watch: {
     value () {
       this.checkTextClass();
+      this.inputListeners.change && this.inputListeners.change();  //防止js赋值给input时,没有触发change的问题
+      this.isFocused = true;  //防止js赋值给input时,校验列表没有展开的问题
+
+      // 当绑定值变化时，如果Input没有焦点，说明是js改变了值，直接校验,否则判断是否需要懒校验
+      if (!this.isActive) {
+        this.updateInputMessageComponent();
+      } else {
+        var timeout = Number(this.lazyCheck);
+        if (timeout > 0) {
+          if (timer) clearTimeout(timer);
+          timer = setTimeout(() => {
+            this.updateInputMessageComponent();
+            timer = null;
+          }, timeout);
+        } else if (this.lazyCheck === undefined) {
+          this.updateInputMessageComponent();
+        }
+      }
     }
   }
 }
