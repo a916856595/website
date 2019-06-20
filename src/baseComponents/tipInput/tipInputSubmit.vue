@@ -13,9 +13,6 @@ export default {
          this.$parent.checkAllChildren();
       }
     }
-  },
-  mounted () {
-    console.log(this.$parent)
   }
 }
 </script>

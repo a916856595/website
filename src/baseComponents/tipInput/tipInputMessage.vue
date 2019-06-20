@@ -131,7 +131,6 @@ export default {
         } else {
           this.$emit('check-success', checkResult);
         }
-        console.log('comp')
         this.$emit('check-complete',!this.isIncludeError, checkResult);
       }
     }

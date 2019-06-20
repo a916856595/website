@@ -1,8 +1,13 @@
 <template>
   <div class="tip-input-box">
-    <p v-if="label" v-text="label" @click="clickPlaceholder" :class="textClass"></p>
-    <input v-on="inputListeners" :value="value" :title="value" :type="type" :class="{'unactive': !isFocused || (value ==='' && !notEmpty), 'active': isActive, 'success': isChecked && !isActive && !hasError, 'fail': isChecked && !isActive && hasError && !(value ==='' && !notEmpty)}" ref="input">
-    <tip-input-message :value="value" :rules="rules" :is-focused="isFocused" :lazy-check="lazyCheck" @check-complete="onCheckComplete" @check-success="onCheckSuccess" @check-fail="onCheckFail"></tip-input-message>
+    <p v-if="label" @click="clickPlaceholder" :class="textClass">
+      <span v-text="label"></span>
+    </p>
+    <div class="input-container">
+      <input v-on="inputListeners" :value="value" :title="value" :type="type" :class="{'unactive': !isFocused || (value ==='' && !required), 'active': isActive, 'success': isChecked && !isActive && !hasError, 'fail': isChecked && !isActive && hasError && !(value ==='' && !required)}" ref="input">
+      <span v-show="value === '' && !isActive && required && isFocused">必填</span>
+    </div>
+    <tip-input-message v-show="(isChecked && hasError && !(value ==='' && !required)) || isActive" :value="value" :rules="rules" :is-focused="isFocused" :lazy-check="lazyCheck" @check-complete="onCheckComplete" @check-success="onCheckSuccess" @check-fail="onCheckFail"></tip-input-message>
   </div>
 </template>
 
@@ -24,8 +29,8 @@ export default {
       type: String,
       default: 'text'
     },
-    // 是否允许空值
-    notEmpty: {
+    // 是否允许必填
+    required: {
       type: Boolean,
       default: false
     },
@@ -153,30 +158,59 @@ export default {
     display: inline-block;
     position: relative;
     p {
-      position: absolute;
-      transition: .2s;
-    }
-    input {
       box-sizing: border-box;
+      position: absolute;
+      z-index: 2;
+      transition: .2s;
       width: 100%;
-      height: 30px;
-      line-height: 30px;
-      border: 1px solid #ccc;
+      padding-right: 21px;
+      span {
+        display: inline-block;
+        width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
+    .input-container {
       border-radius: 5px;
-      font-size: 16px;
-      padding-left: 5px;
-      outline: none;
-      &.unactive {
-        border-color: #ccc;
+      position: relative;
+      overflow: hidden;
+      input {
+        box-sizing: border-box;
+        width: 100%;
+        height: 30px;
+        line-height: 30px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+        padding-left: 5px;
+        outline: none;
+        &.unactive {
+          border-color: #ccc;
+        }
+        &.active {
+          border-color: skyblue;
+        }
+        &.success {
+          border-color: green;
+        }
+        &.fail {
+          border-color: red;
+        }
       }
-      &.active {
-        border-color: skyblue;
-      }
-      &.success {
-        border-color: green;
-      }
-      &.fail {
-        border-color: red;
+      span {
+        position: absolute;
+        right: 0;
+        top: 0;
+        height: 100%;
+        background-color: red;
+        color: white;
+        font-size: 12px;
+        line-height: 14px;
+        width: 15px;
+        text-align: center;
+        z-index: 3;
       }
     }
     .placeholder {

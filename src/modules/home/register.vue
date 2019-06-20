@@ -2,7 +2,7 @@
   <div class="w">
     <div class="register-content">
       <tip-input-box>
-        <tip-input label="请输入账号" v-model="registerInfo.account" disabled @change="change" @check-complete="finish" :rules="accountRules" lazy-check not-empty></tip-input>
+        <tip-input label="请输入账号" v-model="registerInfo.account" disabled @change="change" @check-complete="finish" :rules="accountRules" lazy-check required></tip-input>
         <tip-input type="password" label="请输入密码" v-model="registerInfo.password" :rules="passwordRules" lazy-check></tip-input>
         <div>
           <p>
@@ -65,7 +65,7 @@ export default {
 
     },
     finish (state, checkResult) {
-      console.log('finish', state, checkResult);
+      // console.log('finish', state, checkResult);
     },
     success (checkResult) {
       console.log('success', checkResult);
