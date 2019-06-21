@@ -1,13 +1,13 @@
 <template>
   <div class="tip-input-box">
     <p v-if="label" @click="clickPlaceholder" :class="textClass">
-      <span v-text="label"></span>
+      <span v-text="label" :class="{'disabled': disabled}"></span>
     </p>
     <div class="input-container">
-      <input v-on="inputListeners" :value="value" :title="value" :type="type" :class="{'unactive': !isFocused || (value ==='' && !required), 'active': isActive, 'success': isChecked && !isActive && !hasError, 'fail': isChecked && !isActive && hasError && !(value ==='' && !required)}" ref="input">
-      <span v-show="value === '' && !isActive && required && isFocused">必填</span>
+      <input v-on="inputListeners" :value="value" :title="value" :type="type" :disabled="disabled" :class="{'unactive': !isFocused || (value ==='' && !required), 'active': isActive, 'success': isChecked && !isActive && !hasError || (!isActive && !hasError && required && value !== ''), 'fail': isChecked && !isActive && hasError && !(value ==='' && !required) || (isFocused && !isActive && required && value === '')}" ref="input">
+      <span v-show="value === '' && !isActive && required" :class="{'default-show': !isFocused, 'err-show': isFocused}">必填</span>
     </div>
-    <tip-input-message v-show="(isChecked && hasError && !(value ==='' && !required)) || isActive" :value="value" :rules="rules" :is-focused="isFocused" :lazy-check="lazyCheck" @check-complete="onCheckComplete" @check-success="onCheckSuccess" @check-fail="onCheckFail"></tip-input-message>
+    <tip-input-message v-show="(isChecked && hasError && !(value ==='' && !required)) || isActive" :value="value" :rules="rules" :required="required" :is-focused="isFocused" :lazy-check="lazyCheck" @check-complete="onCheckComplete" @check-success="onCheckSuccess" @check-fail="onCheckFail"></tip-input-message>
   </div>
 </template>
 
@@ -31,6 +31,11 @@ export default {
     },
     // 是否允许必填
     required: {
+      type: Boolean,
+      default: false
+    },
+    // 是否禁用
+    disabled: {
       type: Boolean,
       default: false
     },
@@ -70,6 +75,7 @@ export default {
   },
   methods: {
     clickPlaceholder () {
+      if (this.disabled) return; //被禁用后不执行
       this.textClass = 'tip';
       this.$refs.input.focus();
     },
@@ -163,13 +169,15 @@ export default {
       z-index: 2;
       transition: .2s;
       width: 100%;
-      padding-right: 21px;
       span {
         display: inline-block;
         width: 100%;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+        &.disabled {
+          cursor: not-allowed;
+        }
       }
     }
     .input-container {
@@ -186,6 +194,9 @@ export default {
         font-size: 16px;
         padding-left: 5px;
         outline: none;
+        &[disabled] {
+          cursor: not-allowed;
+        }
         &.unactive {
           border-color: #ccc;
         }
@@ -204,13 +215,18 @@ export default {
         right: 0;
         top: 0;
         height: 100%;
-        background-color: red;
         color: white;
         font-size: 12px;
         line-height: 14px;
         width: 15px;
         text-align: center;
         z-index: 3;
+        &.default-show {
+          background-color: #ccc;
+        }
+        &.err-show {
+          background-color: red;
+        }
       }
     }
     .placeholder {
@@ -218,6 +234,7 @@ export default {
       top: 20px;
       line-height: 32px;
       color: #aaa;
+      padding-right: 21px;
     }
     .tip {
       left: 6px;
@@ -225,6 +242,7 @@ export default {
       line-height: 20px;
       color: #000;
       font-size: 12px;
+      padding-right: 10px;
     }
   }
 </style>

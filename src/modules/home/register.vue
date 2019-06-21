@@ -2,11 +2,11 @@
   <div class="w">
     <div class="register-content">
       <tip-input-box>
-        <tip-input label="请输入账号" v-model="registerInfo.account" disabled @change="change" @check-complete="finish" :rules="accountRules" lazy-check required></tip-input>
-        <tip-input type="password" label="请输入密码" v-model="registerInfo.password" :rules="passwordRules" lazy-check></tip-input>
+        <tip-input label="请输入账号" v-model="registerInfo.account" @change="change" @check-complete="finish" :rules="accountRules" lazy-check required></tip-input>
+        <tip-input type="password" label="请输入密码" v-model="registerInfo.password" :rules="passwordRules" lazy-check required></tip-input>
         <div>
           <p>
-            <tip-input type="password" label="请再次输入密码" v-model="registerInfo.passwordRepeat" :rules="passwordRepeatRules" lazy-check></tip-input>
+            <tip-input type="password" label="请再次输入密码" v-model="registerInfo.passwordRepeat" :rules="passwordRepeatRules" lazy-check required></tip-input>
           </p>
         </div>
         
@@ -36,13 +36,7 @@ export default {
         message: '账号的长度不能超过18',
         rule: /^[\s\S]{0,18}$/
       }],
-      passwordRules: [{
-        message: '密码的长度不能低于9',
-        rule: /^[\s\S]{6,}$/
-      }, {
-        message: '密码的长度不能超过18',
-        rule: /^[\s\S]{0,18}$/
-      }],
+      passwordRules: [],
       passwordRepeatRules: [{
         message: '密码的长度不能低于9',
         rule: /^[\s\S]{6,}$/
@@ -65,7 +59,7 @@ export default {
 
     },
     finish (state, checkResult) {
-      // console.log('finish', state, checkResult);
+      console.log('finish', state, checkResult);
     },
     success (checkResult) {
       console.log('success', checkResult);

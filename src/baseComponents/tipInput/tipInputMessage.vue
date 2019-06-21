@@ -4,7 +4,7 @@
 <template>
   <transition name="fade">
       <ul class="tip-list" v-if="isFocused">
-        <li v-for="(rule, index) in rules" :key="index">
+        <li v-for="(rule, index) in messageRules" :key="index">
           <i :class="['icon', 'iconfont', returnIconClass(index)]"></i>
           <span v-text="rule.messageToShow"></span>
         </li>
@@ -24,6 +24,7 @@ export default {
     value: {},
     isFocused: {},
     rules: {},
+    required: {},
     checkComplete: {
       type: Function
     },
@@ -38,7 +39,18 @@ export default {
     return {
       countOfCheckComplete: 0,
       isIncludeError: false,
-      rulesResult: Array.apply(null, { length: this.rules.length }).map(() => infoCode)
+      rulesResult: []
+    }
+  },
+  computed: {
+    messageRules () {
+      // 判断是否为必填项，是的话增加一个rule
+      var result = __.cloneDeep(this.rules);
+      if (this.required) result.unshift({
+        message: '请填写此字段',
+        rule: /^[\s\S]+$/
+      })
+      return result;
     }
   },
   methods: {
@@ -55,22 +67,24 @@ export default {
           return 'iconclose-circle-fill';
         } else if (result === loadingCode) {
           return 'iconsync';
+        } else if (result === undefined) {
+          return 'iconinfo-circle-fill';
         }
         return this.rulesResult[index] ? 'iconcheck-circle-fill' : 'iconclose-circle-fill';
       }
     },
     resetMessage () {
-      __.forEach(this.rules, (item, index) => {
+      __.forEach(this.messageRules, (item, index) => {
         item.messageToShow = item.message;
-        this.rules.splice(index, 1, item);  //这里需要显式的更新一下数组，否则messageToShow不会更新
+        this.messageRules.splice(index, 1, item);  //这里需要显式的更新一下数组，否则messageToShow不会更新
       });
     },
     checkRules () {
       this.countOfCheckComplete = 0;
       this.isIncludeError = false;
-      this.rulesResult = Array.apply(null, { length: this.rules.length }).map(() => infoCode);
+      this.rulesResult = Array.apply(null, { length: this.messageRules.length }).map(() => infoCode);
       this.resetMessage();
-      this.rules.forEach((rule, ruleIndex) => {
+      this.messageRules.forEach((rule, ruleIndex) => {
         if (rule.isAsync) {
           this.checkRuleAsync(rule, ruleIndex);
         } else {
@@ -89,7 +103,7 @@ export default {
         if (__.isObject(resultOfCheck)) {
           result = resultOfCheck.result ? successCode : failCode;
           rule.messageToShow = resultOfCheck.message;
-          this.rules.splice(ruleIndex, 1, rule);
+          this.messageRules.splice(ruleIndex, 1, rule);
         } else {
           result = resultOfCheck ? successCode : failCode;
         }
@@ -121,9 +135,9 @@ export default {
     checkCompleteState () {
       this.countOfCheckComplete ++;
       if (this.countOfCheckComplete >= this.rulesResult.length) {
-        const checkResult = this.rules.map((item, index) => {
+        const checkResult = this.messageRules.map((item, index) => {
           var itemResult = __.cloneDeep(item);
-          itemResult.state = this.rulesResult[index] === successCode ? true : false;
+          itemResult.valid = this.rulesResult[index] === successCode ? true : false;
           return itemResult;
         })
         if (this.isIncludeError) {
@@ -135,6 +149,10 @@ export default {
       }
     }
   },
+  created() {
+    var rulesLength = this.required ? this.rules.length + 1 : this.rules.length;
+    this.rulesResult = Array.apply(null, { length: rulesLength }).map(() => infoCode);
+  },
   mounted () {
     this.resetMessage();
   }
@@ -143,10 +161,11 @@ export default {
 
 <style lang="less" scoped>
   .fade-enter-active, .fade-leave-active {
-    transition: opacity .5s;
+    transition: opacity .5s, transform .5s;
   }
   .fade-enter, .fade-leave-to {
     opacity: 0;
+    transform: translateX(30px);
   }
   .tip-list {
     li {
