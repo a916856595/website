@@ -15,8 +15,9 @@ global.GLOBAL = GLOBAL;
 // 创建全局方法
 global.__ = new methodsConstructor();
 
-// 自动注册全局基础组件
+// 自动注册全局基础组件和指令
 autoRegisterBaseComponents();
+autoRegisterBaseDirectives();
 
 const router = new VueRouter({ routes: routers });
 router.beforeEach((to, from, next) => {
@@ -38,5 +39,14 @@ function autoRegisterBaseComponents () {
     const componentConfig = requireComponent(component);
     const controller = componentConfig.default || componentConfig;
     Vue.component(controller.name, controller);
+  });
+}
+
+function autoRegisterBaseDirectives () {
+  const requireDirective = require.context('./src/baseDirectives', true, /\.vue$/);
+  requireDirective.keys().forEach(directive => {
+    const directiveConfig = requireDirective(directive);
+    const controller = directiveConfig.default || directiveConfig;
+    Vue.directive(controller.name, controller);
   });
 }

@@ -8,6 +8,9 @@ const routers = [{
   path: '/register',
   component: (resolve) => require(['./src/modules/home/register.vue'], resolve)
 },{
+  path: '/classDemo',
+  component: (resolve) => require(['./src/modules/demo/classDemo.vue'], resolve)
+},{
   path: '*',
   redirect: '/home'
 }];

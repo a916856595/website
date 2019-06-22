@@ -1,8 +1,60 @@
+@main-color: #87ceeb;
+@main-color-dark: #5ba6c4;
+@main-color-light: #deedf3;
+@white: white;
 // 版心
 .w {
   max-width: 1200px;
   min-width: 500px;
   margin: 0 auto;
+}
+
+// 按钮
+.button {
+  text-align: center;
+  outline: none;
+  border-radius: 5px;
+  overflow: hidden;
+  background-color: @main-color;
+  color: @white;
+  border: none;
+  line-height: 20px;
+  font-size: 16px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color linear .2s;
+  &:hover {
+    background-color: @main-color-dark;
+  }
+}
+.button-empty {
+  text-align: center;
+  outline: none;
+  border-radius: 5px;
+  overflow: hidden;
+  background-color: @white;
+  color: @main-color;
+  border: 1px solid @main-color;
+  line-height: 20px;
+  font-size: 16px;
+  padding: 4px 9px;
+  cursor: pointer;
+  transition: background-color linear .2s;
+  &:hover {
+    background-color: @main-color-light;
+  }
+}
+
+div, p, span, a, input, button, textarea, select {
+  box-sizing: border-box;
+} 
+
+// 宽度
+.w50 {
+  width: 50% !important;
+}
+.w100 {
+  width: 100% !important;
 }
 
 // 内边距
@@ -14,4 +66,30 @@
 }
 .pt15 {
   padding-top: 15px !important;
+}
+
+.pr5 {
+  padding-right: 5px !important;
+}
+.pl5 {
+  padding-left: 5px !important;
+}
+
+// display
+.inline-block {
+  display: inline-block !important;
+}
+
+
+// 浮动
+.fl {
+  float: left;
+}
+.fr {
+  float: right;
+}
+.clearfix:after {
+  display: block;
+  clear: both;
+  content: '';
 }

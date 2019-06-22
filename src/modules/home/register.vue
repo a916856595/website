@@ -2,24 +2,27 @@
   <div class="w">
     <div class="register-content">
       <tip-input-box>
-        <tip-input label="请输入账号" v-model="registerInfo.account" @change="change" @check-complete="finish" :rules="accountRules" lazy-check required></tip-input>
+        <tip-input label="请输入账号" v-model="registerInfo.account" :rules="accountRules" lazy-check required></tip-input>
         <tip-input type="password" label="请输入密码" v-model="registerInfo.password" :rules="passwordRules" lazy-check required></tip-input>
-        <div>
-          <p>
-            <tip-input type="password" label="请再次输入密码" v-model="registerInfo.passwordRepeat" :rules="passwordRepeatRules" lazy-check required></tip-input>
-          </p>
+        <tip-input type="password" label="请再次输入密码" v-model="registerInfo.passwordRepeat" :rules="passwordRepeatRules" lazy-check required></tip-input>
+        <tip-input label="请输入昵称" v-model="registerInfo.nickName" lazy-check></tip-input>
+
+        <div class="clearfix">
+          <div class="w50 pr5 fl">
+            <tip-input-submit tag="button" class="button w100" method="click" :submit="startCheck">
+              <span>注册</span>
+            </tip-input-submit>
+          </div>
+          <div class="w50 pl5 fl">
+            <button class="button-empty w100">取消</button>
+          </div>
         </div>
-        
-        <tip-input-submit>
-          <button type="submit">点击校验</button>
-        </tip-input-submit>
       </tip-input-box>
     </div>
   </div>
 </template>
 
 <script>
-import { setInterval } from 'timers';
 export default {
   data () {
     var vm = this;
@@ -27,7 +30,8 @@ export default {
       registerInfo: {
         account: '',
         password: '',
-        passwordRepeat: ''
+        passwordRepeat: '',
+        nickName: ''
       },
       accountRules: [{
         message: '账号的长度不能低于6',
@@ -36,7 +40,13 @@ export default {
         message: '账号的长度不能超过18',
         rule: /^[\s\S]{0,18}$/
       }],
-      passwordRules: [],
+      passwordRules: [{
+        message: '密码的长度不能低于9',
+        rule: /^[\s\S]{6,}$/
+      }, {
+        message: '密码的长度不能超过18',
+        rule: /^[\s\S]{0,18}$/
+      },],
       passwordRepeatRules: [{
         message: '密码的长度不能低于9',
         rule: /^[\s\S]{6,}$/
@@ -55,20 +65,13 @@ export default {
     }
   },
   methods: {
-    change ($event) {
-
-    },
-    finish (state, checkResult) {
-      console.log('finish', state, checkResult);
-    },
-    success (checkResult) {
-      console.log('success', checkResult);
-    },
-    fail (checkResult) {
-      console.log('fail', checkResult);
-    },
-    input (event) {
-      console.log('input outer')
+    startCheck (checkEvent) {
+      console.log('start check')
+      checkEvent().then((resultObj) => {
+        console.log(resultObj)
+      }, (errorObj) => {
+        console.log(errorObj)
+      });
     }
   },
   mounted () {

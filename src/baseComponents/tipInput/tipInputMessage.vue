@@ -80,24 +80,27 @@ export default {
       });
     },
     checkRules () {
-      this.countOfCheckComplete = 0;
-      this.isIncludeError = false;
-      this.rulesResult = Array.apply(null, { length: this.messageRules.length }).map(() => infoCode);
-      this.resetMessage();
-      this.messageRules.forEach((rule, ruleIndex) => {
-        if (rule.isAsync) {
-          this.checkRuleAsync(rule, ruleIndex);
-        } else {
-          this.checkRuleSync(rule, ruleIndex);
-        }
+      return new Promise((resolve) => {
+        if (!this.messageRules.length) return this.checkCompleteState(resolve);  //如果没有校验规则，直接完成校验
+        this.countOfCheckComplete = 0;
+        this.isIncludeError = false;
+        this.rulesResult = Array.apply(null, { length: this.messageRules.length }).map(() => infoCode);
+        this.resetMessage();
+        this.messageRules.forEach((rule, ruleIndex) => {
+          if (rule.isAsync) {
+            this.checkRuleAsync(rule, ruleIndex, resolve);
+          } else {
+            this.checkRuleSync(rule, ruleIndex, resolve);
+          }
+        });
       });
     },
-    checkRuleSync(rule, ruleIndex) {
+    checkRuleSync(rule, ruleIndex, resolve) {
       var result;
       if (__.isRegExp(rule.rule)) {
         result = rule.rule.test(this.value) ? successCode : failCode;
         if (result === failCode) this.isIncludeError = true;
-        this.checkCompleteState();
+        this.checkCompleteState(resolve);
       } else if (__.isFunction(rule.rule)) {
         var resultOfCheck = rule.rule(this.value);
         if (__.isObject(resultOfCheck)) {
@@ -108,44 +111,46 @@ export default {
           result = resultOfCheck ? successCode : failCode;
         }
         if (result === failCode) this.isIncludeError = true;
-        this.checkCompleteState();
+        this.checkCompleteState(resolve);
       } else {
         throw new Error('rule字段应提供一个正则或返回true/false的校验函数');
       }
       this.rulesResult[ruleIndex] = result;
     },
-    checkRuleAsync(rule, ruleIndex) {
+    checkRuleAsync(rule, ruleIndex, resolve) {
       const vm = this;
       this.rulesResult.splice(ruleIndex, 1, loadingCode);
       if (__.isFunction(rule.rule)) {
         rule.rule(this.value).then(function (message) {
           vm.rulesResult.splice(ruleIndex, 1, successCode);
-          vm.checkCompleteState();
+          vm.checkCompleteState(resolve);
           if (message) rule.messageToShow = message;
         }, function (message) {
           vm.rulesResult.splice(ruleIndex, 1, failCode);
           vm.isIncludeError = true;
-          vm.checkCompleteState();
+          vm.checkCompleteState(resolve);
           if (message) rule.messageToShow = message;
         });
       } else {
         throw new Error('异步rule字段应提供一个返回Promise校验函数');
       }
     },
-    checkCompleteState () {
+    checkCompleteState (resolve) {
       this.countOfCheckComplete ++;
       if (this.countOfCheckComplete >= this.rulesResult.length) {
         const checkResult = this.messageRules.map((item, index) => {
           var itemResult = __.cloneDeep(item);
           itemResult.valid = this.rulesResult[index] === successCode ? true : false;
           return itemResult;
-        })
+        });
+        var isValid = !this.isIncludeError;
         if (this.isIncludeError) {
           this.$emit('check-fail', checkResult);
         } else {
           this.$emit('check-success', checkResult);
         }
-        this.$emit('check-complete',!this.isIncludeError, checkResult);
+        this.$emit('check-complete', isValid, checkResult);
+        resolve(isValid);
       }
     }
   },

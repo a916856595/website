@@ -4,8 +4,8 @@
       <span v-text="label" :class="{'disabled': disabled}"></span>
     </p>
     <div class="input-container">
-      <input v-on="inputListeners" :value="value" :title="value" :type="type" :disabled="disabled" :class="{'unactive': !isFocused || (value ==='' && !required), 'active': isActive, 'success': isChecked && !isActive && !hasError || (!isActive && !hasError && required && value !== ''), 'fail': isChecked && !isActive && hasError && !(value ==='' && !required) || (isFocused && !isActive && required && value === '')}" ref="input">
-      <span v-show="value === '' && !isActive && required" :class="{'default-show': !isFocused, 'err-show': isFocused}">必填</span>
+      <input v-on="inputListeners" :value="value" :title="value" :type="type" :disabled="disabled" :class="returnInputBorderClass" ref="input">
+      <span v-show="checkValueIsEmpty() && !isActive && required" :class="{'default-show': !isFocused, 'err-show': isFocused}">必填</span>
     </div>
     <tip-input-message v-show="(isChecked && hasError && !(value ==='' && !required)) || isActive" :value="value" :rules="rules" :required="required" :is-focused="isFocused" :lazy-check="lazyCheck" @check-complete="onCheckComplete" @check-success="onCheckSuccess" @check-fail="onCheckFail"></tip-input-message>
   </div>
@@ -74,6 +74,12 @@ export default {
     }
   },
   methods: {
+    checkValueIsEmpty () {
+      let result = false;
+      let value = this.value;
+      if (value === '' || value === undefined) result = true;
+      return result;
+    },
     clickPlaceholder () {
       if (this.disabled) return; //被禁用后不执行
       this.textClass = 'tip';
@@ -99,9 +105,11 @@ export default {
       this.$emit('check-fail', checkResult);
     },
     updateInputMessageComponent () {
-      this.isFocused = true;
-      this.isChecked = true;
-      this.$children.filter(item => item.$options.name === 'tip-input-message')[0].checkRules();  //由于是独立组件，直接获取子组件的方法
+      return new Promise((resolve) => {
+        this.isFocused = true;
+        this.isChecked = true;
+        this.$children.filter(item => item.$options.name === 'tip-input-message')[0].checkRules().then(isValid => resolve(isValid));  //由于是独立组件，直接获取子组件的方法
+      });
     }
   },
   mounted () {
@@ -124,11 +132,18 @@ export default {
           vm.value ? null : vm.textClass = 'placeholder';
           vm.isActive = false;
           if (vm.lazyCheck === '') {
-            vm.updateInputMessageComponent();  //当组件有lazy-check属性而没有赋值的时候在失焦时校验
+            vm.updateInputMessageComponent().then(isValid => isValid);  //当组件有lazy-check属性而没有赋值的时候在失焦时校验
           }
           vm.$emit('blur', event);
         },
       })
+    },
+    returnInputBorderClass () {
+      if (this.isActive) return 'active';
+      if (!this.isFocused || (this.checkValueIsEmpty() && !this.required)) return 'unactive';
+      if (this.isChecked && !this.isActive && this.hasError && !(this.checkValueIsEmpty() && !this.required) || (this.isFocused && !this.isActive && this.required && this.checkValueIsEmpty())) return 'fail';
+      if (this.isChecked && !this.isActive && !this.hasError && this.value !== '') return 'success';
+      return 'unactive';
     }
   },
   watch: {
@@ -139,17 +154,17 @@ export default {
 
       // 当绑定值变化时，如果Input没有焦点，说明是js改变了值，直接校验,否则判断是否需要懒校验
       if (!this.isActive) {
-        this.updateInputMessageComponent();
+        this.updateInputMessageComponent().then(isValid => isValid);
       } else {
         var timeout = Number(this.lazyCheck);
         if (timeout > 0) {
           if (timer) clearTimeout(timer);
           timer = setTimeout(() => {
-            this.updateInputMessageComponent();
+            this.updateInputMessageComponent().then(isValid => isValid);
             timer = null;
           }, timeout);
         } else if (this.lazyCheck === undefined) {
-          this.updateInputMessageComponent();
+          this.updateInputMessageComponent().then(isValid => isValid);
         }
       }
     }
@@ -232,9 +247,11 @@ export default {
     .placeholder {
       left: 6px;
       top: 20px;
-      line-height: 32px;
       color: #aaa;
       padding-right: 21px;
+      span {
+        line-height: 30px;
+      }
     }
     .tip {
       left: 6px;
@@ -243,6 +260,9 @@ export default {
       color: #000;
       font-size: 12px;
       padding-right: 10px;
+      span {
+        line-height: 20px;
+      }
     }
   }
 </style>
