@@ -8,6 +8,13 @@ import VueRouter from 'vue-router';
 import App from './app.vue';
 import routers from './routers.js';
 import methodsConstructor from './src/lib/easy.js';
+import axios from 'axios';
+import Qs from 'qs';
+
+let serverBaseUrl = 'http://127.0.0.1:7000/api/';
+let axiosInstance = createAxiosInstance();
+
+Vue.prototype.$request = axiosInstance;
 
 Vue.use(VueRouter);
 // 创建全局变量
@@ -33,6 +40,8 @@ new Vue ({
   render: h => h(App)
 });
 
+// function
+
 function autoRegisterBaseComponents () {
   const requireComponent = require.context('./src/baseComponents', true, /\.vue$/);
   requireComponent.keys().forEach(component => {
@@ -49,4 +58,39 @@ function autoRegisterBaseDirectives () {
     const controller = directiveConfig.default || directiveConfig;
     Vue.directive(controller.name, controller);
   });
+}
+
+// 创建axios实例
+function createAxiosInstance() {
+  let request = {};
+  let instance = axios.create({
+    baseURL: serverBaseUrl,
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    transformRequest: [function (data) {
+      data = Qs.stringify(data);
+      return data;
+    }]
+  });
+
+  request.get = function (url, data) {
+    return new Promise((resolve, reject) => {
+      instance.get(url, { params: data}).then(response => {
+        resolve(response.data.result);
+      }).catch(function (msg) {
+        reject(msg);
+      });
+    })
+  };
+
+  request.post = function (url, data) {
+    return new Promise((resolve, reject) => {
+      instance.post(url, data).then(response => {
+        resolve(response.data.result);
+      }).catch(function (msg) {
+        reject(msg);
+      });
+    })
+  };
+
+  return request;
 }
