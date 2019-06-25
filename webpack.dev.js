@@ -21,7 +21,15 @@ var config = {
       })
     },{
       test: /\.less$/,
-      use: ['style-loader', 'css-loader', 'less-loader']  //这里为了能热更新less不抽取到公共css
+      use: ExtractTextPlugin.extract({  //将less抽取到公共css文件中
+        use: ['css-loader', 'less-loader', {
+          loader: 'style-resources-loader',
+          options: {
+            patterns: path.resolve(__dirname, './src/styles/common/*.less')
+          }
+        }],
+        fallback: 'vue-style-loader'
+      })
     }, {
       test: /\.vue$/,
       loader: 'vue-loader',

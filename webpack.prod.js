@@ -8,13 +8,20 @@ var UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 webpackBaseConfig.plugins = [];
-webpackBaseConfig.module.rules[1] = {
-  test: /\.less$/,
-  use: ExtractTextPlugin.extract({  //将less抽取到公共css文件中
-    use: 'css-loader!less-loader',
-    fallback: 'style-loader'
-  })
-}
+// webpackBaseConfig.module.rules[1] = {
+//   test: /\.less$/,
+//   use: ExtractTextPlugin.extract({  //将less抽取到公共css文件中
+//     use: ['css-loader', 'less-loader', {
+//       loader: 'sass-resources-loader',
+//       options: {
+//         resources: [
+//             path.resolve(__dirname, './src/styles/common/common.less'), //定义全局变量的文件路径 
+//         ]
+//       }
+//     }],
+//     fallback: 'vue-style-loader'
+//   })
+// }
 
 module.exports = WebpackMerge(webpackBaseConfig, {
   output: {
