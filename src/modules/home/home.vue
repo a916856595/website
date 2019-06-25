@@ -15,7 +15,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
   .top-header {
     background-color: @main-color;
   }
