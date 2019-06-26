@@ -1,10 +1,26 @@
-@header-height: 60px; // 顶部菜单高度
-@content-max-width: 1000px; //版心最大宽度
-@content-min-width: 500px; //版心最小宽度
+@mobile-max-width: 480px;
+@pc-min-width: @mobile-max-width + 1px;
 
+@header-line-height: 30px; // 顶部菜单文本行高
+@header-padding: 10px;  // 顶部菜单内边距
+@header-height: @header-line-height + @header-padding * 2 + 1px; // 顶部菜单高度
+
+@content-max-width: 1000px; //版心最大宽度
+@content-min-width: 320px; //版心最小宽度
+
+// 间距
+@field-padding: 5px;
+
+// 边框
+@border-color: #ccc;
+@border: 1px solid #ccc;
 
 // 颜色
 @main-color: #87ceeb;  //主题色
 @main-color-dark: #5ba6c4;  //主题色-深
 @main-color-light: #deedf3;  //主题色-浅
 @white: white;
+
+// 动画相关
+@transition-time: .4s;
+

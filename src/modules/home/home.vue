@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="home-page">
     <header-component></header-component>
     <router-link to="/login">登录页</router-link>
     <router-link to="/register">注册页</router-link>
@@ -17,7 +17,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  .top-header {
-    background-color: @main-color;
+  .home-page {
+    padding-top: @header-height;
   }
 </style>

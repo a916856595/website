@@ -1,5 +1,23 @@
 @import './config.less';
 
+// 媒体查询
+@media only screen and (max-width: @mobile-max-width) {
+  .pc {
+    display: none;
+  }
+  .mobile {
+    display: block;
+  }
+} 
+@media only screen and (min-width: @pc-min-width) {
+  .pc {
+    display: block;
+  }
+  .mobile {
+    display: none;
+  }
+} 
+
 // 版心
 .w {
   max-width: @content-max-width;
@@ -42,6 +60,30 @@
     background-color: @main-color-light;
   }
 }
+.hover-button {
+  cursor: pointer;
+  transition: color @transition-time;
+  position: relative;
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background-color: @main-color;
+    transition: left @transition-time, width @transition-time;
+  }
+  &:hover {
+    color: @main-color;
+    &::after {
+      left: 0;
+      width: 100%;
+    }
+  }
+  
+}
 
 div, p, span, a, input, button, textarea, select {
   box-sizing: border-box;
@@ -56,6 +98,22 @@ div, p, span, a, input, button, textarea, select {
 }
 
 // 内边距
+.fp {
+  padding: @field-padding !important;
+}
+.fpl {
+  padding-left: @field-padding !important;
+}
+.fpr {
+  padding-right: @field-padding !important;
+}
+.fpt {
+  padding-top: @field-padding !important;
+}
+.fpb {
+  padding-bottom: @field-padding !important;
+}
+
 .pt5 {
   padding-top: 5px !important;
 }
