@@ -1,8 +1,6 @@
 <template>
   <div>
-    <div class="top-header">
-      <p>顶部</p>
-    </div>
+    <header-component></header-component>
     <router-link to="/login">登录页</router-link>
     <router-link to="/register">注册页</router-link>
     <router-link to="/classDemo">类名Class</router-link>
@@ -10,8 +8,11 @@
 </template>
 
 <script>
+import headerComponent from '@components/headerComponent/headerComponent.vue';
 export default {
-
+  components: {
+    headerComponent
+  }
 }
 </script>
 

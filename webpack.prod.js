@@ -1,41 +1,30 @@
-var path = require('path');
-var VueLoaderPlugin = require('vue-loader/lib/plugin');
-var Webpack = require('webpack');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-var WebpackMerge = require('webpack-merge');
-var webpackBaseConfig = require('./webpack.dev.js');
-var UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
+const path = require('path');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
+let webpackBaseConfig = require('./webpack.dev.js');
+const Webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const WebpackMerge = require('webpack-merge');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 webpackBaseConfig.plugins = [];
-// webpackBaseConfig.module.rules[1] = {
-//   test: /\.less$/,
-//   use: ExtractTextPlugin.extract({  //将less抽取到公共css文件中
-//     use: ['css-loader', 'less-loader', {
-//       loader: 'sass-resources-loader',
-//       options: {
-//         resources: [
-//             path.resolve(__dirname, './src/styles/common/common.less'), //定义全局变量的文件路径 
-//         ]
-//       }
-//     }],
-//     fallback: 'vue-style-loader'
-//   })
-// }
+webpackBaseConfig.module.rules[1] = {
+  test: /\.less$/,
+  use: ExtractTextPlugin.extract({  //将less抽取到公共css文件中
+    use: ['css-loader', 'less-loader', {
+      loader: 'style-resources-loader',
+      options: {
+        patterns: path.resolve(__dirname, './src/styles/common/*.less')
+      }
+    }],
+    fallback: 'vue-style-loader'
+  })
+}
 
 module.exports = WebpackMerge(webpackBaseConfig, {
   output: {
     path: path.join(__dirname, 'dist'),
     filename: '[name].[hash].js'
-  },
-  optimization: {
-    minimizer: [
-      new UglifyJsPlugin({
-          uglifyOptions: {
-              compress: false
-          }
-      })
-    ]
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -44,6 +33,7 @@ module.exports = WebpackMerge(webpackBaseConfig, {
       favicon: path.resolve('favicon.ico')
     }),
     new VueLoaderPlugin(),
-    new ExtractTextPlugin("main.css")
+    new ExtractTextPlugin("main.css"),
+    new OptimizeCssAssetsPlugin(), //压缩css
   ]
 });

@@ -1,9 +1,10 @@
-var path = require('path');
-var VueLoaderPlugin = require('vue-loader/lib/plugin');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
+const path = require('path');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 var config = {
+  mode: 'development',
   devtool: 'cheap-module-source-map',
   entry: {
     main: path.join(__dirname, 'main.js')
@@ -21,15 +22,12 @@ var config = {
       })
     },{
       test: /\.less$/,
-      use: ExtractTextPlugin.extract({  //将less抽取到公共css文件中
-        use: ['css-loader', 'less-loader', {
-          loader: 'style-resources-loader',
-          options: {
-            patterns: path.resolve(__dirname, './src/styles/common/*.less')
-          }
-        }],
-        fallback: 'vue-style-loader'
-      })
+      use: ['vue-style-loader', 'css-loader', 'less-loader', {
+        loader: 'style-resources-loader',
+        options: {
+          patterns: path.resolve(__dirname, './src/styles/common/*.less')
+        }
+      }]
     }, {
       test: /\.vue$/,
       loader: 'vue-loader',
@@ -54,6 +52,13 @@ var config = {
       test: /\.(woff|woff2|svg|eot|ttf)\??.*$/,
       loader: 'file-loader'
     }]
+  },
+  resolve: {
+    extensions: ['.js', '.vue', '.json'],
+    // 这里配置引用文件路径的别名
+    alias: {
+        '@components': path.resolve(__dirname, 'src/components')
+    }
   },
   plugins: [
     new VueLoaderPlugin(),
