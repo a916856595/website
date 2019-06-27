@@ -2,9 +2,9 @@
   <div class="w">
     <div class="register-content">
       <tip-input-box>
-        <tip-input label="请输入账号" v-model="registerInfo.userName" :rules="userNameRules" lazy-check="500" required></tip-input>
-        <tip-input type="password" label="请输入密码" v-model="registerInfo.password" :rules="passwordRules" lazy-check="500" required></tip-input>
-        <tip-input type="password" label="请再次输入密码" v-model="registerInfo.passwordRepeat" :rules="passwordRepeatRules" lazy-check="500" required></tip-input>
+        <tip-input label="请输入账号" v-model="registerInfo.userName" :rules="userNameRules" lazy-check="1000" required></tip-input>
+        <tip-input type="password" label="请输入密码" v-model="registerInfo.password" :rules="passwordRules" lazy-check="1000" required></tip-input>
+        <tip-input type="password" label="请再次输入密码" v-model="registerInfo.passwordRepeat" :rules="passwordRepeatRules" lazy-check="1000" required></tip-input>
         <tip-input label="请输入昵称" v-model="registerInfo.nickName" lazy-check></tip-input>
 
         <div class="clearfix mt10">
@@ -44,6 +44,8 @@ export default {
         message: '账号是否可用',
         rule: () => {
           return new Promise((resolve, reject) => {
+            let userName = vm.registerInfo.userName;
+            if (userName === '' || userName === undefined) return reject('请输入账号后进行重名校验')
             this.checkAccountIsRepeat().then(result => {
               if (result.usable === 'usable') resolve('账号可用');
               reject('账号不可用');
@@ -92,7 +94,7 @@ export default {
     checkAccountIsRepeat () {
       var vm = this;
       return new Promise((resolve, reject) => {
-        vm.$request.get('user/checkUserName', { userName: vm.registerInfo.userName }).then(result => resolve(result), err => reject(err));
+        vm.$tipRequest.get('user/checkUserName', { userName: vm.registerInfo.userName }).then(result => resolve(result), err => reject(err));
       });
     },
     register () {

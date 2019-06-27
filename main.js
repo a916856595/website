@@ -4,6 +4,7 @@ import './src/styles/common/common.less';
 
 import GLOBAL from './src/global.js';
 import Vue from 'vue';
+import Vuex from 'vuex';
 import VueRouter from 'vue-router';
 import App from './app.vue';
 import routers from './routers.js';
@@ -13,10 +14,13 @@ import Qs from 'qs';
 
 let serverBaseUrl = 'http://127.0.0.1:7000/api/';
 let axiosInstance = createAxiosInstance();
+let tipAxiosInstance = createAxiosInstance(configTipRquest);
 
 Vue.prototype.$request = axiosInstance;
+Vue.prototype.$tipRequest = tipAxiosInstance;
 
 Vue.use(VueRouter);
+Vue.use(Vuex);
 // 创建全局变量
 global.GLOBAL = GLOBAL;
 // 创建全局方法
@@ -34,8 +38,23 @@ router.beforeResolve((to, from, next) => {
   next();
 });
 
+const store = new Vuex.Store({
+  state: {
+    requestCount: 0  //请求数量计数器
+  },
+  mutations: {
+    addRequestCount (state) {
+      state.requestCount++;
+    },
+    reduceRequestCount (state) {
+      state.requestCount--;
+    }
+  }
+});
+
 new Vue ({
   el: '#app',
+  store,
   router,
   render: h => h(App)
 });
@@ -61,7 +80,7 @@ function autoRegisterBaseDirectives () {
 }
 
 // 创建axios实例
-function createAxiosInstance() {
+function createAxiosInstance(callback) {
   let request = {};
   let instance = axios.create({
     baseURL: serverBaseUrl,
@@ -71,6 +90,8 @@ function createAxiosInstance() {
       return data;
     }]
   });
+
+  callback && callback(instance);
 
   request.get = function (url, data) {
     return new Promise((resolve, reject) => {
@@ -93,4 +114,26 @@ function createAxiosInstance() {
   };
 
   return request;
+}
+
+// TODO 对需要有提示的请求做配置，目前思路是在vuex配置一个count，发送请求后自增，完成请求自减，count不为零说明当前还有请求未完成，展示提示信息
+function configTipRquest(instance) {
+  instance.interceptors.request.use(config => {
+    // 在发送请求之前做些什么
+    store.commit('addRequestCount');
+    return config;
+  }, function (error) {
+    // 对请求错误做些什么
+    return Promise.reject(error);
+  });
+
+  instance.interceptors.response.use(function (response) {
+    // 对响应数据做点什么
+    store.commit('reduceRequestCount');
+    return response;
+  }, function (error) {
+    // 对响应错误做点什么
+    store.commit('reduceRequestCount');
+    return Promise.reject(error);
+  });
 }
