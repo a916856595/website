@@ -1,6 +1,7 @@
 <template>
-  <div class="home-page">
-    <router-link to="/main/classDemo">类名示例</router-link>
+  <div class="main-page">
+    <header-component></header-component>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -14,5 +15,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
+  .main-page {
+    padding-top: @header-height;
+  }
 </style>

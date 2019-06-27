@@ -2,17 +2,23 @@
   校验信息组件
 -->
 <template>
-  <transition name="fade">
-      <ul class="tip-list" v-if="isFocused">
-        <li v-for="(rule, index) in messageRules" :key="index">
+    <!-- <ul class="tip-list" v-show="isShow"> -->
+      <transition-group tag="ul" class="tip-list" name="staggered-fade"
+          v-bind:css="false"
+          v-on:before-enter="beforeEnter"
+          v-on:enter="enter"
+          v-on:leave="leave">
+        <li v-for="(rule, index) in rulesToShow" :key="rule.message" :data-index="index">
           <i :class="['icon', 'iconfont', returnIconClass(index)]"></i>
           <span v-text="rule.messageToShow"></span>
         </li>
-      </ul>
-  </transition>
+      </transition-group>
+      
+    <!-- </ul> -->
 </template>
 
 <script>
+import Velocity from 'velocity-animate';
 const infoCode = 0;
 const successCode = 1;
 const failCode = 2;
@@ -33,6 +39,9 @@ export default {
     },
     checkFail: {
       type: Function
+    },
+    isShow: {
+      type: Boolean
     }
   },
   data () {
@@ -50,7 +59,13 @@ export default {
         message: '请填写此字段',
         rule: /^[\s\S]+$/
       })
+      result.forEach(item => {
+        item.messageToShow = item.message;
+      });
       return result;
+    },
+    rulesToShow () {
+      return this.isShow ? this.messageRules : [];
     }
   },
   methods: {
@@ -76,7 +91,6 @@ export default {
     resetMessage () {
       __.forEach(this.messageRules, (item, index) => {
         item.messageToShow = item.message;
-        this.messageRules.splice(index, 1, item);  //这里需要显式的更新一下数组，否则messageToShow不会更新
       });
     },
     checkRules () {
@@ -152,26 +166,45 @@ export default {
         this.$emit('check-complete', isValid, checkResult);
         resolve(isValid);
       }
+    },
+    beforeEnter: function (el) {
+      el.style.opacity = 0;
+      el.style.height = 0;
+    },
+    enter: function (el, done) {
+      var delay = el.dataset.index * 100
+      setTimeout(function () {
+        Velocity(
+          el,
+          { opacity: 1, height: '20px' },
+          { complete: done }
+        );
+      }, delay);
+    },
+    leave: function (el, done) {
+      var delay = el.dataset.index * 150
+      setTimeout(function () {
+        Velocity(
+          el,
+          { opacity: 0, height: 0 },
+          { complete: done }
+        );
+      }, delay);
     }
   },
   created() {
-    var rulesLength = this.required ? this.rules.length + 1 : this.rules.length;
-    this.rulesResult = Array.apply(null, { length: rulesLength }).map(() => infoCode);
+    this.$nextTick(() => {
+      var rulesLength = this.required ? this.rules.length + 1 : this.rules.length;
+      this.rulesResult = Array.apply(null, { length: rulesLength }).map(() => infoCode);
+    });
   },
   mounted () {
-    this.resetMessage();
+
   }
 }
 </script>
 
 <style lang="less" scoped>
-  .fade-enter-active, .fade-leave-active {
-    transition: opacity .5s, transform .5s;
-  }
-  .fade-enter, .fade-leave-to {
-    opacity: 0;
-    transform: translateX(30px);
-  }
   .tip-list {
     li {
       i,span {

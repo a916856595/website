@@ -56,14 +56,14 @@ export default {
       }],
       passwordRules: [{
         message: '密码的长度不能低于9',
-        rule: /^[\s\S]{6,}$/
+        rule: /^[\s\S]{9,}$/
       }, {
         message: '密码的长度不能超过18',
         rule: /^[\s\S]{0,18}$/
       },],
       passwordRepeatRules: [{
         message: '密码的长度不能低于9',
-        rule: /^[\s\S]{6,}$/
+        rule: /^[\s\S]{9,}$/
       }, {
         message: '密码的长度不能超过18',
         rule: /^[\s\S]{0,18}$/

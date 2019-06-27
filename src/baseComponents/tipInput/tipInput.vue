@@ -7,7 +7,7 @@
       <input v-on="inputListeners" :value="value" :title="value" :type="type" :disabled="disabled" :class="returnInputBorderClass" ref="input">
       <span v-show="checkValueIsEmpty() && !isActive && required" :class="{'default-show': !isFocused, 'err-show': isFocused}">必填</span>
     </div>
-    <tip-input-message v-show="(isChecked && hasError && !(value ==='' && !required)) || isActive" :value="value" :rules="rules" :required="required" :is-focused="isFocused" :lazy-check="lazyCheck" @check-complete="onCheckComplete" @check-success="onCheckSuccess" @check-fail="onCheckFail"></tip-input-message>
+    <tip-input-message :is-show="isShowMessage" :value="value" :rules="rules" :required="required" :is-focused="isFocused" :lazy-check="lazyCheck" @check-complete="onCheckComplete" @check-success="onCheckSuccess" @check-fail="onCheckFail"></tip-input-message>
   </div>
 </template>
 
@@ -144,6 +144,9 @@ export default {
       if (this.isChecked && !this.isActive && this.hasError && !(this.checkValueIsEmpty() && !this.required) || (this.isFocused && !this.isActive && this.required && this.checkValueIsEmpty())) return 'fail';
       if (this.isChecked && !this.isActive && !this.hasError && this.value !== '') return 'success';
       return 'unactive';
+    },
+    isShowMessage () {
+      return (this.isChecked && this.hasError && !(this.value ==='' && !this.required)) || this.isActive;
     }
   },
   watch: {

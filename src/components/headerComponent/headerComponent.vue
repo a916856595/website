@@ -3,15 +3,15 @@
     <div class="w">
       <div class="menu-list-box">
         <ul class="menu-list">
-          <li class="fl hover-button">
+          <router-link tag="li" to="/main" class="fl hover-button">
             <span>首页</span>
-          </li>
-          <li class="fr pc hover-button">
+          </router-link>
+          <router-link tag="li" to="/main/register" class="fr hover-button pc">
             <span>注册</span>
-          </li>
-          <li class="fr pc hover-button">
+          </router-link>
+          <router-link tag="li" to="/main/login" class="fr hover-button pc">
             <span>登录</span>
-          </li>
+          </router-link>
           <li class="fr mobile hover-button" @click="toggleSideMenu">
             <i class="icon iconfont iconmenu"></i>
           </li>
@@ -20,12 +20,12 @@
     </div>
     <div :class="['menu-list-row-box', 'mobile', {'show-side-menu': isShowSideMenu}]">
       <ul class="menu-list-row">
-        <li class="hover-button">
+        <router-link tag="li" to="/main/register" class="hover-button">
           <span>注册</span>
-        </li>
-        <li class="hover-button">
+        </router-link>
+        <router-link tag="li" to="/main/login" class="hover-button">
           <span>登录</span>
-        </li>
+        </router-link>
       </ul>
     </div>
   </div>
@@ -62,8 +62,15 @@ export default {
     .menu-list, .menu-list-row {
       li {
         padding: @header-padding @header-padding * 2;
-        span, i {
+        span, i, a {
           line-height: @header-line-height;
+          text-decoration: none;
+          color: #000;
+        }
+        &:hover {
+          span, i, a {
+            color: @color-theme;
+          }
         }
       }
     }

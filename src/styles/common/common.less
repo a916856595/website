@@ -31,16 +31,17 @@
   outline: none;
   border-radius: 5px;
   overflow: hidden;
-  background-color: @main-color;
-  color: @white;
-  border: none;
+  background-color: @color-theme;
+  color: @color-white;
+  border: @border-color-theme;
   line-height: 20px;
   font-size: 16px;
-  padding: 5px 10px;
+  padding: 4px 9px;
   cursor: pointer;
-  transition: background-color linear .2s;
+  transition: background-color linear @transition-time-short;
   &:hover {
-    background-color: @main-color-dark;
+    background-color: @color-white;
+    color: @color-theme;
   }
 }
 .button-empty {
@@ -48,22 +49,25 @@
   outline: none;
   border-radius: 5px;
   overflow: hidden;
-  background-color: @white;
-  color: @main-color;
-  border: 1px solid @main-color;
+  background-color: @color-white;
+  color: @color-theme;
+  border: 1px solid @color-theme;
   line-height: 20px;
   font-size: 16px;
   padding: 4px 9px;
   cursor: pointer;
   transition: background-color linear .2s;
   &:hover {
-    background-color: @main-color-light;
+    background-color: @color-theme;
+    color: @color-white;
   }
 }
 .hover-button {
   cursor: pointer;
   transition: color @transition-time;
   position: relative;
+  background-color: #fff;
+  border: none;
   &::after {
     content: '';
     display: block;
@@ -72,11 +76,11 @@
     left: 50%;
     width: 0;
     height: 2px;
-    background-color: @main-color;
+    background-color: @color-theme;
     transition: left @transition-time, width @transition-time;
   }
   &:hover {
-    color: @main-color;
+    color: @color-theme;
     &::after {
       left: 0;
       width: 100%;
@@ -140,7 +144,9 @@ div, p, span, a, input, button, textarea, select {
 .mt10 {
   margin-top: 10px !important;
 }
-
+.mb10 {
+  margin-bottom: 10px !important;
+}
 
 // 浮动
 .fl {

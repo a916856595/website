@@ -11,16 +11,21 @@
 // 间距
 @field-padding: 5px;
 
-// 边框
-@border-color: #ccc;
-@border: 1px solid #ccc;
-
 // 颜色
-@main-color: #87ceeb;  //主题色
-@main-color-dark: #5ba6c4;  //主题色-深
-@main-color-light: #deedf3;  //主题色-浅
-@white: white;
+@color-theme: #87ceeb;  //主题色
+@color-theme-dark: #5ba6c4;  //主题色-深
+@color-theme-light: #deedf3;  //主题色-浅
+@color-white: white;
+
+// 边框
+@border-width: 1px;  //默认边框宽度
+@border-color: #ccc;  //默认边框颜色
+@border: @border-width solid @border-color;  //默认边框
+@border-color-theme: @border-width solid @color-theme;  //主题色边框
+
+
 
 // 动画相关
 @transition-time: .4s;
+@transition-time-short: .2s;
 
