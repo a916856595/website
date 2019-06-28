@@ -1,8 +1,8 @@
 <template>
   <div class="header-component">
-    <div class="w">
-      <div class="menu-list-box">
-        <ul class="menu-list">
+    <div class="menu-list-box">
+      <div class="w">
+        <ul class="menu-list clearfix">
           <router-link tag="li" to="/main" class="fl hover-button">
             <span>首页</span>
           </router-link>

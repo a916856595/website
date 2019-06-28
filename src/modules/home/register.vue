@@ -1,5 +1,5 @@
 <template>
-  <div class="w">
+  <div class="col-mb-12 col-pd-6 col-pd-offset-3 col-pc-4 col-pc-offset-4 fpl fpr">
     <div class="register-content">
       <tip-input-box>
         <tip-input label="请输入账号" v-model="registerInfo.userName" :rules="userNameRules" lazy-check="1000" required></tip-input>
@@ -113,9 +113,6 @@ export default {
 </script>
 
 <style lang="less">
-  .register-content {
-    max-width: 300px;
-    margin: 0 auto;
-  }
+
 </style>
 
