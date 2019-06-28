@@ -25,7 +25,7 @@ var config = {
       use: ['vue-style-loader', 'css-loader', 'less-loader', {
         loader: 'style-resources-loader',
         options: {
-          patterns: path.resolve(__dirname, './src/styles/common/*.less')
+          patterns: path.resolve(__dirname, './src/styles/common/config.less')
         }
       }]
     }, {

@@ -1,24 +1,21 @@
 <!-- 
-  校验信息组件
+  校验信息组件  TODO  这里的列表动画使用的动画库，期望不用动画库仅用transition完成动画
 -->
 <template>
-    <!-- <ul class="tip-list" v-show="isShow"> -->
-      <transition-group tag="ul" class="tip-list" name="staggered-fade"
-          v-bind:css="false"
-          v-on:before-enter="beforeEnter"
-          v-on:enter="enter"
-          v-on:leave="leave">
-        <li v-for="(rule, index) in rulesToShow" :key="rule.message" :data-index="index">
-          <i :class="['icon', 'iconfont', returnIconClass(index)]"></i>
-          <span v-text="rule.messageToShow"></span>
-        </li>
-      </transition-group>
-      
-    <!-- </ul> -->
+  <transition-group tag="ul" class="tip-list" name="staggered-fade"
+      v-bind:css="false"
+      v-on:before-enter="beforeEnter"
+      v-on:enter="enter"
+      v-on:leave="leave">
+    <li v-for="(rule, index) in rulesToShow" :key="rule.message" :data-index="index">
+      <i :class="['icon', 'iconfont', returnIconClass(index)]"></i>
+      <span v-text="rule.messageToShow"></span>
+    </li>
+  </transition-group>
 </template>
 
 <script>
-import Velocity from 'velocity-animate';
+import Velocity from 'velocity-animate'; // 动画库
 const infoCode = 0;
 const successCode = 1;
 const failCode = 2;

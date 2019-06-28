@@ -6,13 +6,13 @@
           <router-link tag="li" to="/main" class="fl hover-button">
             <span>首页</span>
           </router-link>
-          <router-link tag="li" to="/main/register" class="fr hover-button pc">
+          <router-link tag="li" to="/main/register" class="fr hover-button not-mobile">
             <span>注册</span>
           </router-link>
-          <router-link tag="li" to="/main/login" class="fr hover-button pc">
+          <router-link tag="li" to="/main/login" class="fr hover-button not-mobile">
             <span>登录</span>
           </router-link>
-          <li class="fr mobile hover-button" @click="toggleSideMenu">
+          <li class="fr hover-button mobile" @click="toggleSideMenu">
             <i class="icon iconfont iconmenu"></i>
           </li>
         </ul>

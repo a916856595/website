@@ -1,12 +1,14 @@
 @mobile-max-width: 480px;
-@pc-min-width: @mobile-max-width + 1px;
+@pad-max-width: 768px;
+@pad-min-width: @mobile-max-width + 1px;
+@pc-min-width: @pad-max-width + 1px;
 
 @header-line-height: 30px; // 顶部菜单文本行高
 @header-padding: 10px;  // 顶部菜单内边距
 @header-height: @header-line-height + @header-padding * 2 + 1px; // 顶部菜单高度
 
 @content-max-width: 1000px; //版心最大宽度
-@content-min-width: 320px; //版心最小宽度
+@content-min-width: @mobile-max-width; //版心最小宽度
 
 // 间距
 @field-padding: 5px;
