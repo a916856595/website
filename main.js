@@ -20,7 +20,7 @@ global.GLOBAL = GLOBAL;
 // 创建全局方法
 global.__ = new methodsConstructor();
 
-// 自动注册全局基础组件和指令
+// 自动注册制定目录内全局基础组件和指令
 autoRegisterBaseComponents();
 autoRegisterBaseDirectives();
 

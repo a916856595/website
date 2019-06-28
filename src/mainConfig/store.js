@@ -5,7 +5,7 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
-    requestCount: 0  //请求数量计数器
+    requestCount: 0,  //请求数量计数器
   },
   mutations: {
     addRequestCount (state) {

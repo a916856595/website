@@ -45,7 +45,8 @@ export default {
         rule: () => {
           return new Promise((resolve, reject) => {
             let userName = vm.registerInfo.userName;
-            if (userName === '' || userName === undefined) return reject('请输入账号后进行重名校验')
+            if (userName === '' || userName === undefined) return reject('请输入账号后进行重名校验');
+            if (userName.length < 6 || userName.length > 18) return reject('请输入符合规则的账号后进行重名校验');
             this.checkAccountIsRepeat().then(result => {
               if (result.usable === 'usable') resolve('账号可用');
               reject('账号不可用');
@@ -88,19 +89,19 @@ export default {
         this.register();
       }, (errorObj) => {
         console.log(errorObj)
-        this.isFieldAllRight = true;
+        this.isFieldAllRight = false;
       });
     },
     checkAccountIsRepeat () {
       var vm = this;
       return new Promise((resolve, reject) => {
-        vm.$tipRequest.get('user/checkUserName', { userName: vm.registerInfo.userName }).then(result => resolve(result), err => reject(err));
+        vm.$request.get('user/checkUserName', { userName: vm.registerInfo.userName }).then(result => resolve(result), err => reject(err));
       });
     },
     register () {
       if (!this.isFieldAllRight) return alert('校验未通过');
       var vm = this;
-      vm.$request.post('user/sign', vm.registerInfo).then(result => {
+      vm.$tipRequest.post('user/sign', vm.registerInfo).then(result => {
         
       }, err => err);
     }
