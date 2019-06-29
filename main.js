@@ -6,7 +6,7 @@ import './src/styles/common/layout.less';
 import GLOBAL from './src/global.js';
 import Vue from 'vue';
 
-import App from './app.vue';
+import App from './src/modules/main.vue';
 import router from './src/mainConfig/router.js';
 import store from './src/mainConfig/store.js';
 import axiosInstance from './src/mainConfig/request.js';

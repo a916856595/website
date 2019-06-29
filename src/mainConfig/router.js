@@ -10,31 +10,25 @@ import classDemo from '../modules/demo/classDemo.vue';
 Vue.use(VueRouter);
 
 const routers = [{
-  path: '/main',
-  // name: 'main',  此路由有默认子路由，建议不设置name属性
-  component: main,
-  children: [
-    {
-      path: 'login',
-      name: 'login',
-      component: login
-    },{
-      path: 'register',
-      name: 'register',
-      component: register
-    },{
-      path: 'classDemo',
-      name: 'classDemo',
-      component: classDemo
-    },{
-      path: '',
-      name: 'home',
-      component: home
-    }
-  ]},{
-    path: '*',
-    redirect: '/main'
-  }];
+  path: '/login',
+  name: 'login',
+  component: login
+},{
+  path: '/register',
+  name: 'register',
+  component: register
+},{
+  path: '/classDemo',
+  name: 'classDemo',
+  component: classDemo
+},{
+  path: '/home',
+  name: 'home',
+  component: home
+},{
+  path: '*',
+  redirect: '/home'
+}];
 
 const router = new VueRouter({ routes: routers });
   router.beforeEach((to, from, next) => {

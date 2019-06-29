@@ -13,6 +13,7 @@ function createAxiosInstance(callback) {
   let request = {};
   let instance = axios.create({
     baseURL: serverBaseUrl,
+    timeout: 5000,
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     transformRequest: [function (data) {
       data = Qs.stringify(data);

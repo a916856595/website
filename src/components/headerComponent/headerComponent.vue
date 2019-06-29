@@ -3,13 +3,13 @@
     <div class="menu-list-box">
       <div class="w">
         <ul class="menu-list clearfix">
-          <router-link tag="li" to="/main" class="fl hover-button">
+          <router-link tag="li" to="/home" class="fl hover-button">
             <span>首页</span>
           </router-link>
-          <router-link tag="li" to="/main/register" class="fr hover-button not-mobile">
+          <router-link tag="li" to="/register" class="fr hover-button not-mobile">
             <span>注册</span>
           </router-link>
-          <router-link tag="li" to="/main/login" class="fr hover-button not-mobile">
+          <router-link tag="li" to="/login" class="fr hover-button not-mobile">
             <span>登录</span>
           </router-link>
           <li class="fr hover-button mobile" @click="toggleSideMenu">
@@ -20,10 +20,10 @@
     </div>
     <div :class="['menu-list-row-box', 'mobile', {'show-side-menu': isShowSideMenu}]">
       <ul class="menu-list-row">
-        <router-link tag="li" to="/main/register" class="hover-button">
+        <router-link tag="li" to="/register" class="hover-button">
           <span>注册</span>
         </router-link>
-        <router-link tag="li" to="/main/login" class="hover-button">
+        <router-link tag="li" to="/login" class="hover-button">
           <span>登录</span>
         </router-link>
       </ul>

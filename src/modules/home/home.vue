@@ -1,6 +1,6 @@
 <template>
   <div class="home-page">
-    <router-link to="/main/classDemo">类名示例</router-link>
+    <router-link to="/classDemo">类名示例</router-link>
   </div>
 </template>
 

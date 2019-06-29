@@ -20,7 +20,8 @@ export default {
     return {
       isShowMask: false,
       classOfProgress: 'fill-0',
-      classOfTransition: 'transition-none'
+      classOfTransition: 'transition-none',
+      timer: null
     }
   },
   methods: {
@@ -36,6 +37,11 @@ export default {
     completeProgress () {
       this.classOfTransition = 'transition-short';
       this.classOfProgress = 'fill-100';
+    },
+    endTransition () {
+      this.isShowMask = false;
+      this.classOfProgress = 'fill-0';
+      this.classOfTransition = 'transition-none';
     }
   },
   computed: {
@@ -50,11 +56,20 @@ export default {
     }
   },
   mounted () {
-    this.$refs.fill.addEventListener('transitionend', () => {
+    this.$refs.fill.addEventListener('transitionend', () => {  //由于transitionend时无法保证请求池内没有请求了，因此加定时器去判断当前请求是否都结束了
       if (this.classOfProgress === 'fill-100') {
-        this.isShowMask = false;
-        this.classOfProgress = 'fill-0';
-        this.classOfTransition = 'transition-none';
+        console.log(this.requestCount)
+        if (this.requestCount) {
+          this.timer = setInterval(() => {
+            if (!this.requestCount) {
+              this.endTransition();
+              clearInterval(this.timer);
+              this.timer = null;
+            }
+          }, 100);
+        } else {
+          this.endTransition();
+        }
       }
     });
   }
@@ -84,7 +99,7 @@ export default {
           transition: width 1s;
         }
         &.transition-short {
-          transition: width .1s;
+          transition: width 1s;
         }
         &.fill-0 {
           width: 0;

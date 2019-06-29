@@ -1,8 +1,10 @@
 @import './config.less';
 // 此less为布局相关样式
 
+
+
 // --------------媒体查询 --------------
-// 目前分为三种 mobile <= 480 <= pad <= 768 <= pc 
+// 目前分为三种 mobile <= 480 <= pad <= 768 <= pc
 @media (min-width: 0) {
   .pc {
     display: none;
@@ -23,78 +25,8 @@
     display: none;
   }
 // 栅格
-  .col-mb-12 {
-    width: 100%;
-  }
-  .col-mb-11 {
-    width: 91.66666667%;
-  }
-  .col-mb-10 {
-    width: 83.33333333%;
-  }
-  .col-mb-9 {
-    width: 75%;
-  }
-  .col-mb-8 {
-    width: 66.66666667%;
-  }
-  .col-mb-7 {
-    width: 58.33333333%;
-  }
-  .col-mb-6 {
-    width: 50%;
-  }
-  .col-mb-5 {
-    width: 41.66666667%;
-  }
-  .col-mb-4 {
-    width: 33.33333333%;
-  }
-  .col-mb-3 {
-    width: 25%;
-  }
-  .col-mb-2 {
-    width: 16.66666667%;
-  }
-  .col-mb-1 {
-    width: 8.33333333%;
-  }
-  .col-mb-offset-12 {
-    margin-left: 100%;
-  }
-  .col-mb-offset-11 {
-    margin-left: 91.66666667%;
-  }
-  .col-mb-offset-10 {
-    margin-left: 83.33333333%;
-  }
-  .col-mb-offset-9 {
-    margin-left: 75%;
-  }
-  .col-mb-offset-8 {
-    margin-left: 66.66666667%;
-  }
-  .col-mb-offset-7 {
-    margin-left: 58.33333333%;
-  }
-  .col-mb-offset-6 {
-    margin-left: 50%;
-  }
-  .col-mb-offset-5 {
-    margin-left: 41.66666667%;
-  }
-  .col-mb-offset-4 {
-    margin-left: 33.33333333%;
-  }
-  .col-mb-offset-3 {
-    margin-left: 25%;
-  }
-  .col-mb-offset-2 {
-    margin-left: 16.66666667%;
-  }
-  .col-mb-offset-1 {
-    margin-left: 8.33333333%;
-  }
+.loopGrid(col-mb, width, 12);
+.loopGrid(col-mb-offset, margin-left, 12);
 }
 @media (min-width: @pad-min-width) {
   .pc {
@@ -115,78 +47,8 @@
   .not-mobile {
     display: block;
   }
-  .col-pd-12 {
-    width: 100%;
-  }
-  .col-pd-11 {
-    width: 91.66666667%;
-  }
-  .col-pd-10 {
-    width: 83.33333333%;
-  }
-  .col-pd-9 {
-    width: 75%;
-  }
-  .col-pd-8 {
-    width: 66.66666667%;
-  }
-  .col-pd-7 {
-    width: 58.33333333%;
-  }
-  .col-pd-6 {
-    width: 50%;
-  }
-  .col-pd-5 {
-    width: 41.66666667%;
-  }
-  .col-pd-4 {
-    width: 33.33333333%;
-  }
-  .col-pd-3 {
-    width: 25%;
-  }
-  .col-pd-2 {
-    width: 16.66666667%;
-  }
-  .col-pd-1 {
-    width: 8.33333333%;
-  }
-  .col-pd-offset-12 {
-    margin-left: 100%;
-  }
-  .col-pd-offset-11 {
-    margin-left: 91.66666667%;
-  }
-  .col-pd-offset-10 {
-    margin-left: 83.33333333%;
-  }
-  .col-pd-offset-9 {
-    margin-left: 75%;
-  }
-  .col-pd-offset-8 {
-    margin-left: 66.66666667%;
-  }
-  .col-pd-offset-7 {
-    margin-left: 58.33333333%;
-  }
-  .col-pd-offset-6 {
-    margin-left: 50%;
-  }
-  .col-pd-offset-5 {
-    margin-left: 41.66666667%;
-  }
-  .col-pd-offset-4 {
-    margin-left: 33.33333333%;
-  }
-  .col-pd-offset-3 {
-    margin-left: 25%;
-  }
-  .col-pd-offset-2 {
-    margin-left: 16.66666667%;
-  }
-  .col-pd-offset-1 {
-    margin-left: 8.33333333%;
-  }
+  .loopGrid(col-pd, width, 12);
+  .loopGrid(col-pd-offset, margin-left, 12);
 }
 @media (min-width: @pc-min-width) {
   .pc {
@@ -207,78 +69,8 @@
   .not-mobile {
     display: block;
   }
-  .col-pc-12 {
-    width: 100%;
-  }
-  .col-pc-11 {
-    width: 91.66666667%;
-  }
-  .col-pc-10 {
-    width: 83.33333333%;
-  }
-  .col-pc-9 {
-    width: 75%;
-  }
-  .col-pc-8 {
-    width: 66.66666667%;
-  }
-  .col-pc-7 {
-    width: 58.33333333%;
-  }
-  .col-pc-6 {
-    width: 50%;
-  }
-  .col-pc-5 {
-    width: 41.66666667%;
-  }
-  .col-pc-4 {
-    width: 33.33333333%;
-  }
-  .col-pc-3 {
-    width: 25%;
-  }
-  .col-pc-2 {
-    width: 16.66666667%;
-  }
-  .col-pc-1 {
-    width: 8.33333333%;
-  }
-  .col-pc-offset-12 {
-    margin-left: 100%;
-  }
-  .col-pc-offset-11 {
-    margin-left: 91.66666667%;
-  }
-  .col-pc-offset-10 {
-    margin-left: 83.33333333%;
-  }
-  .col-pc-offset-9 {
-    margin-left: 75%;
-  }
-  .col-pc-offset-8 {
-    margin-left: 66.66666667%;
-  }
-  .col-pc-offset-7 {
-    margin-left: 58.33333333%;
-  }
-  .col-pc-offset-6 {
-    margin-left: 50%;
-  }
-  .col-pc-offset-5 {
-    margin-left: 41.66666667%;
-  }
-  .col-pc-offset-4 {
-    margin-left: 33.33333333%;
-  }
-  .col-pc-offset-3 {
-    margin-left: 25%;
-  }
-  .col-pc-offset-2 {
-    margin-left: 16.66666667%;
-  }
-  .col-pc-offset-1 {
-    margin-left: 8.33333333%;
-  }
+  .loopGrid(col-pc, width, 12);
+  .loopGrid(col-pc-offset, margin-left, 12);
 }
 .col-mb-12,.col-mb-11,.col-mb-10,.col-mb-9,.col-mb-8,.col-mb-7,.col-mb-6,.col-mb-5,.col-mb-4,.col-mb-3,.col-mb-2,.col-mb-1,
 .col-pd-12,.col-pd-11,.col-pd-10,.col-pd-9,.col-pd-8,.col-pd-7,.col-pd-6,.col-pd-5,.col-pd-4,.col-pd-3,.col-pd-2,.col-pd-1,
@@ -317,6 +109,8 @@ div, p, span, a, input, button, textarea, select {
   padding-bottom: @field-padding !important;
 }
 // 固定值内边距
+//.loopDistance(p, padding, 50, 5);  //自动生成0-50间隔为5的padding
+// .loopDistance(m, margin, 50, 5);  //自动生成0-50间隔为5的margin 再次使用循环导致报错
 .pd0 {
   padding: 0 !important;
 }

@@ -32,3 +32,30 @@
 @transition-time: .4s;
 @transition-time-short: .2s;
 
+// 生成栅格的函数
+.loopGrid (@frontClass, @attribute, @count) when (@count > 0) {
+  .@{frontClass}-@{count} {
+    @{attribute}: @count / 12 * 100%;
+  }
+  .loopGrid(@frontClass, @attribute, (@count - 1));
+}
+
+// 生成固定边距的函数
+.loopDistance(@frontClass, @attribute, @maxValue, @interval) when (@maxValue >= 0) {
+  .@{frontClass}@{maxValue} {
+    @{attribute}: @maxValue + 0px !important;
+  }
+  .@{frontClass}l@{maxValue} {
+    @{attribute}-left: @maxValue + 0px !important;
+  }
+  .@{frontClass}r@{maxValue} {
+    @{attribute}-right: @maxValue + 0px !important;
+  }
+  .@{frontClass}t@{maxValue} {
+    @{attribute}-top: @maxValue + 0px !important;
+  }
+  .@{frontClass}b@{maxValue} {
+    @{attribute}-bottom: @maxValue + 0px !important;
+  }
+  .loopDistance(@frontClass, @attribute, (@maxValue - @interval), @interval);
+}
