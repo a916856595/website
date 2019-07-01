@@ -1,0 +1,67 @@
+$mobile-min-width: 320px;
+$mobile-max-width: 480px;
+$pad-max-width: 768px;
+$pad-min-width: $mobile-max-width + 1px;
+$pc-min-width: $pad-max-width + 1px;
+
+$header-line-height: 30px; // 顶部菜单文本行高
+$header-padding: 10px;  // 顶部菜单内边距
+$header-height: $header-line-height + $header-padding * 2 + 1px; // 顶部菜单高度
+
+$content-max-width: 1000px; //版心最大宽度
+$content-min-width: $mobile-min-width; //版心最小宽度
+
+// 间距
+$field-padding: 5px;  //标准文本间距
+$content-padding: 15px;  //标准内容间距
+
+// 颜色
+$color-theme: #87ceeb;  //主题色
+$color-theme-dark: #5ba6c4;  //主题色-深
+$color-theme-light: #deedf3;  //主题色-浅
+$color-white: white;
+
+// 边框
+$border-width: 1px;  //默认边框宽度
+$border-color: #ccc;  //默认边框颜色
+$border: $border-width solid $border-color;  //默认边框
+$border-color-theme: $border-width solid $color-theme;  //主题色边框
+
+
+
+// 动画相关
+$transition-time: .4s;
+$transition-time-short: .2s;
+
+
+// 栅格相关
+$grid-number: 12; //栅格数量
+// 生成栅格的混入
+@mixin loopGrid ($frontClass, $attribute) {
+  @for $index from $grid-number through 0 {
+    .#{$frontClass}-#{$index} {
+      #{$attribute}: percentage($index / $grid-number);
+    }
+  }
+}
+// 生成固定间距的混入
+@mixin loopDistance($frontClass, $attribute, $maxValue, $interval) {
+  @for $index from ($maxValue / $interval) through 0 {
+    $currentValue: $interval * $index;
+    .#{$frontClass}#{$currentValue} {
+      #{$attribute}: $currentValue + 0px !important;
+    }
+    .#{$frontClass}l#{$currentValue} {
+      #{$attribute}-left: $currentValue + 0px !important;
+    }
+    .#{$frontClass}r#{$currentValue} {
+      #{$attribute}-right: $currentValue + 0px !important;
+    }
+    .#{$frontClass}t#{$currentValue} {
+      #{$attribute}-top: $currentValue + 0px !important;
+    }
+    .#{$frontClass}b#{$currentValue} {
+      #{$attribute}-bottom: $currentValue + 0px !important;
+    }
+  }
+}

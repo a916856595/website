@@ -1,0 +1,173 @@
+@import './config.scss';
+// 此less为布局相关样式
+
+
+
+// --------------媒体查询 --------------
+// 目前分为三种 mobile <= 480 <= pad <= 768 <= pc
+@media (min-width: 0) {
+  .mb-content {
+    padding-left: $content-padding;
+    padding-right: $content-padding;
+  }
+  .pc {
+    display: none;
+  }
+  .pad {
+    display: none;
+  }
+  .mobile {
+    display: block;
+  }
+  .not-pc {
+    display: block;
+  }
+  .not-pad {
+    display: block;
+  }
+  .not-mobile {
+    display: none;
+  }
+// 栅格
+@include loopGrid(col-mb, width);
+@include loopGrid(col-mb-offset, margin-left);
+}
+@media (min-width: $pad-min-width) {
+  .mb-content {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .pd-content {
+    padding-left: $content-padding;
+    padding-right: $content-padding;
+  }
+  .pc {
+    display: none;
+  }
+  .pad {
+    display: block;
+  }
+  .mobile {
+    display: none;
+  }
+  .not-pc {
+    display: block;
+  }
+  .not-pad {
+    display: none;
+  }
+  .not-mobile {
+    display: block;
+  }
+  @include loopGrid(col-pd, width);
+  @include loopGrid(col-pd-offset, margin-left);
+}
+@media (min-width: $pc-min-width) {
+  .mb-content {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .pd-content {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .pc-content {
+    padding-left: $content-padding;
+    padding-right: $content-padding;
+  }
+  .pc {
+    display: block;
+  }
+  .pad {
+    display: none;
+  }
+  .mobile {
+    display: none;
+  }
+  .not-pc {
+    display: none;
+  }
+  .not-pad {
+    display: block;
+  }
+  .not-mobile {
+    display: block;
+  }
+  @include loopGrid(col-pc, width);
+  @include loopGrid(col-pc-offset, margin-left);
+}
+.col-mb-12,.col-mb-11,.col-mb-10,.col-mb-9,.col-mb-8,.col-mb-7,.col-mb-6,.col-mb-5,.col-mb-4,.col-mb-3,.col-mb-2,.col-mb-1,
+.col-pd-12,.col-pd-11,.col-pd-10,.col-pd-9,.col-pd-8,.col-pd-7,.col-pd-6,.col-pd-5,.col-pd-4,.col-pd-3,.col-pd-2,.col-pd-1,
+.col-pc-12,.col-pc-11,.col-pc-10,.col-pc-9,.col-pc-8,.col-pc-7,.col-pc-6,.col-pc-5,.col-pc-4,.col-pc-3,.col-pc-2,.col-pc-1 {
+  float: left;
+  min-height: 1px;
+}
+
+
+// 版心
+.w {
+  max-width: $content-max-width;
+  min-width: $content-min-width;
+  margin: 0 auto;
+}
+// 设置主要元素的盒模型
+div, p, span, a, input, button, textarea, select {
+  box-sizing: border-box;
+} 
+
+// --------------内边距--------------
+// 标准字段内边距
+.fp {
+  padding: $field-padding !important;
+}
+.fpl {
+  padding-left: $field-padding !important;
+}
+.fpr {
+  padding-right: $field-padding !important;
+}
+.fpt {
+  padding-top: $field-padding !important;
+}
+.fpb {
+  padding-bottom: $field-padding !important;
+}
+// 固定值内边距
+@include loopDistance(p, padding, 50, 5);  //自动生成0-50间隔为5的padding
+@include loopDistance(m, margin, 50, 5);  //自动生成0-50间隔为5的margin
+
+// 宽度
+.w50 {
+  width: 50% !important;
+}
+.w100 {
+  width: 100% !important;
+}
+
+
+
+// display
+.inline-block {
+  display: inline-block !important;
+}
+
+// 外边距
+.mt10 {
+  margin-top: 10px !important;
+}
+.mb10 {
+  margin-bottom: 10px !important;
+}
+
+// 浮动
+.fl {
+  float: left;
+}
+.fr {
+  float: right;
+}
+.clearfix:after {
+  display: block;
+  clear: both;
+  content: '';
+}

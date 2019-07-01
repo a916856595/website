@@ -17,8 +17,8 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
   .main-page {
-    padding-top: @header-height;
+    padding-top: $header-height;
   }
 </style>

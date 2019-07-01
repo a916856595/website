@@ -76,7 +76,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
   .loading-animation-component {
     position: fixed;
     width: 100%;
@@ -94,7 +94,7 @@ export default {
         top: 0;
         left: 0;
         height: 100%;
-        background-color: @color-theme;
+        background-color: $color-theme;
         &.transition-long {
           transition: width 1s;
         }

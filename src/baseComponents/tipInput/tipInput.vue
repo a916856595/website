@@ -175,7 +175,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
   .tip-input-box {
     width: 100%;
     padding-top: 20px;

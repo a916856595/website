@@ -1,7 +1,7 @@
 import './src/styles/common/reset.css';
 import './src/font/iconfont.css';
-import './src/styles/common/common.less';
-import './src/styles/common/layout.less';
+import './src/styles/common/common.scss';
+import './src/styles/common/layout.scss';
 
 import GLOBAL from './src/global.js';
 import Vue from 'vue';

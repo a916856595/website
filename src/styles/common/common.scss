@@ -1,4 +1,4 @@
-@import './config.less';
+@import './config.scss';
 
 // 按钮
 .button {
@@ -6,17 +6,17 @@
   outline: none;
   border-radius: 5px;
   overflow: hidden;
-  background-color: @color-theme;
-  color: @color-white;
-  border: @border-color-theme;
+  background-color: $color-theme;
+  color: $color-white;
+  border: $border-color-theme;
   line-height: 20px;
   font-size: 16px;
   padding: 4px 9px;
   cursor: pointer;
-  transition: background-color linear @transition-time-short;
+  transition: background-color linear $transition-time-short;
   &:hover {
-    background-color: @color-white;
-    color: @color-theme;
+    background-color: $color-white;
+    color: $color-theme;
   }
 }
 .button-empty {
@@ -24,22 +24,22 @@
   outline: none;
   border-radius: 5px;
   overflow: hidden;
-  background-color: @color-white;
-  color: @color-theme;
-  border: 1px solid @color-theme;
+  background-color: $color-white;
+  color: $color-theme;
+  border: 1px solid $color-theme;
   line-height: 20px;
   font-size: 16px;
   padding: 4px 9px;
   cursor: pointer;
   transition: background-color linear .2s;
   &:hover {
-    background-color: @color-theme;
-    color: @color-white;
+    background-color: $color-theme;
+    color: $color-white;
   }
 }
 .hover-button {
   cursor: pointer;
-  transition: color @transition-time;
+  transition: color $transition-time;
   position: relative;
   background-color: #fff;
   border: none;
@@ -51,11 +51,11 @@
     left: 50%;
     width: 0;
     height: 2px;
-    background-color: @color-theme;
-    transition: left @transition-time, width @transition-time;
+    background-color: $color-theme;
+    transition: left $transition-time, width $transition-time;
   }
   &:hover {
-    color: @color-theme;
+    color: $color-theme;
     &::after {
       left: 0;
       width: 100%;

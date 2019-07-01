@@ -29,6 +29,14 @@ var config = {
         }
       }]
     }, {
+      test: /\.scss$/,
+      use: ['vue-style-loader', 'css-loader', 'sass-loader', {
+        loader: 'style-resources-loader',
+        options: {
+          patterns: path.resolve(__dirname, './src/styles/common/config.scss')
+        }
+      }]
+    }, {
       test: /\.vue$/,
       loader: 'vue-loader',
       options: {   //此选项将.vue中的css提取到style标签中

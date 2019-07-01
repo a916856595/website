@@ -47,7 +47,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
   .header-component {
     .menu-list-box {
       z-index: 99;
@@ -57,19 +57,19 @@ export default {
       width: 100%;
       background-color: #fff;
       color: #000;
-      border-bottom: 1px solid @border-color;
+      border-bottom: 1px solid $border-color;
     }
     .menu-list, .menu-list-row {
       li {
-        padding: @header-padding @header-padding * 2;
+        padding: $header-padding $header-padding * 2;
         span, i, a {
-          line-height: @header-line-height;
+          line-height: $header-line-height;
           text-decoration: none;
           color: #000;
         }
         &:hover {
           span, i, a {
-            color: @color-theme;
+            color: $color-theme;
           }
         }
       }
@@ -78,22 +78,22 @@ export default {
       overflow: hidden;
       background-color: #fff;
       z-index: 98;
-      padding-top: @header-height + 1px;
+      padding-top: $header-height + 1px;
       position: fixed;
       left: 0;
       top: 0;
       width: 120px;
       height: 100%;
-      border-right: @border;
+      border-right: $border;
       transform: translateX(-100%);
-      transition: transform @transition-time;
+      transition: transform $transition-time;
       &.show-side-menu {
         transform: translateX(0);
       }
     }
     .menu-list-row {
       li {
-        border-bottom: @border;
+        border-bottom: $border;
       }
     }
   }
