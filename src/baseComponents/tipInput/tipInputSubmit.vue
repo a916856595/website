@@ -46,9 +46,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-  .box {
-    display: inline-block;
-  }
+<style lang="scss">
+
 </style>
 

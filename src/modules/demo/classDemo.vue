@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="demo-list-page">
     <ul class="demo-list">
       <li>
         <p class="class-title">按钮类</p>
@@ -75,7 +75,8 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss">
+.demo-list-page {
   .demo-list {
     &>li {
       padding-left: 20px;
@@ -106,5 +107,6 @@ export default {
       }
     }
   }
+}
 </style>
 

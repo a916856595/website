@@ -2,7 +2,7 @@
   校验信息组件  TODO  这里的列表动画使用的动画库，期望不用动画库仅用transition完成动画
 -->
 <template>
-  <transition-group tag="ul" class="tip-list" name="staggered-fade"
+  <transition-group tag="ul" class="tip-input-message-component" name="staggered-fade"
       v-bind:css="false"
       v-on:before-enter="beforeEnter"
       v-on:enter="enter"
@@ -201,8 +201,8 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-  .tip-list {
+<style lang="scss">
+  .tip-input-message-component {
     li {
       i,span {
         line-height: 20px;

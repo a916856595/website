@@ -19,7 +19,19 @@ webpackBaseConfig.module.rules[1] = {
     }],
     fallback: 'vue-style-loader'
   })
-}
+};
+webpackBaseConfig.module.rules[2] = {
+  test: /\.scss$/,
+  use: ExtractTextPlugin.extract({  //将less抽取到公共css文件中
+    use: ['css-loader', 'sass-loader', {
+      loader: 'style-resources-loader',
+      options: {
+        patterns: path.resolve(__dirname, './src/styles/common/*.scss')
+      }
+    }],
+    fallback: 'vue-style-loader'
+  })
+};
 
 module.exports = WebpackMerge(webpackBaseConfig, {
   output: {

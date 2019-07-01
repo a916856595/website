@@ -1,5 +1,5 @@
 <template>
-  <div class="tip-input-box">
+  <div class="tip-input-component">
     <p v-if="label" @click="clickPlaceholder" :class="textClass">
       <span v-text="label" :class="{'disabled': disabled}"></span>
     </p>
@@ -175,8 +175,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-  .tip-input-box {
+<style lang="scss">
+  .tip-input-component {
     width: 100%;
     padding-top: 20px;
     display: inline-block;
