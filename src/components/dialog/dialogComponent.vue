@@ -7,6 +7,10 @@
 <script>
 let children = null;
 let vm = null;
+const DEFAULT_TIP_HEAD_TEXT = '提示';
+const DEFAULT_TIP_HEAD_CONTENT = '提示信息';
+const DEFAULT_BUTTON_TEXT = '关闭';
+
 export default {
   name: 'dialog-component',
   render,
@@ -48,10 +52,12 @@ function render(createElement) {
   let dialogComponentChildren = loopDialogArrayToCreateChildren(createElement, this.dialogConfigArray);
   return createElement('div', dialogComponentConfig, dialogComponentChildren);
 }
-
-function createMaskElement(createElement, children) {
+// 创建遮罩层
+function createMaskElement(createElement, dialogConfig, children) {
+  let EventObject = parseEventDataReturnConfigObject(dialogConfig.maskEvents, dialogConfig);
   let maskConfig = {
-    class: 'mask'
+    class: 'mask',
+    on: EventObject
   };
   return createElement('div', maskConfig, children)
 }
@@ -64,7 +70,7 @@ function loopDialogArrayToCreateChildren(createElement, dialogConfigArray) {
         child = parseTipConfigReturnElement(createElement, dialogConfig); 
         break;
     }
-    return createMaskElement(createElement, [child]);
+    return createMaskElement(createElement, dialogConfig, [child]);
   });
   return children;
 }
@@ -84,14 +90,14 @@ function createHeaderElement(createElement, dialogConfig) {
   const tipHeaderConfig = {
     class: 'tip-header',
   };
-  const dialogTitle = dialogConfig.title || '提示';
+  const dialogTitle = dialogConfig.title || DEFAULT_TIP_HEAD_TEXT;
   const tipHeaderContentArguments = ['div', { class: 'tip-header-content text-center' }, dialogTitle];
   return createElement('div', tipHeaderConfig, [createElement.apply(null, tipHeaderContentArguments)]);
 }
 // 创建内容元素
 function createBodyElement(createElement, dialogConfig) {
   // 这里特殊处理一下，当没有内容且按钮列表为空时，展示一段默认文本
-  if (!dialogConfig.content && __.isArray(dialogConfig.buttons) && dialogConfig.buttons.length === 0) dialogConfig.content = '这是一段提示信息';
+  if (!dialogConfig.content && __.isArray(dialogConfig.buttons) && dialogConfig.buttons.length === 0) dialogConfig.content = DEFAULT_TIP_HEAD_CONTENT;
   let dialogBody = [];
   let textContent = createElement('p', { class: 'text-conetnt' }, dialogConfig.content);
   dialogBody.push(textContent);
@@ -112,41 +118,54 @@ function createButtonChildren(createElement, dialogConfig) {
   // 4.dialogConfig.buttons的item是对象时生成相应按钮
   let buttonList = [];
   let buttons = dialogConfig.buttons;
-  let closeEvent = () => {
-    vm.$store.commit('removeDialogConfig', { dialogId: dialogConfig.dialogId });
-  };
-  let defaultButtonConfig = { text: '关闭', class: 'button-empty', events: { click: closeEvent } };
+  let defaultButtonConfig = { text: DEFAULT_BUTTON_TEXT, class: 'button-empty', events: 'close' };
   if (__.isArray(buttons)) {
     if (buttons.length) {
       buttons.forEach(buttonConfig => {
         switch (buttonConfig) {
           case 'close':
-             buttonList.push(createButton(createElement, defaultButtonConfig, closeEvent));
+             buttonList.push(createButton(createElement, defaultButtonConfig, dialogConfig));
              break;
           default:
-            if (__.isObject(buttonConfig)) buttonList.push(createButton(createElement, buttonConfig, closeEvent)); 
+            if (__.isObject(buttonConfig)) buttonList.push(createButton(createElement, buttonConfig, dialogConfig)); 
         }
       });
     }
   } else {
-    buttonList.push(createButton(createElement, defaultButtonConfig, closeEvent));
+    buttonList.push(createButton(createElement, defaultButtonConfig, dialogConfig));
   }
   return buttonList;
 }
-
-function createButton(createElement, buttonData, closeEvent) {
-  let buttonText = buttonData.text || '关闭';
-  let eventObject = {};
-  for (let key in buttonData.events) {
-    eventObject[key] = () => {
-      buttonData.events[key](closeEvent);
-    };
-  }
+// 创建按钮
+function createButton(createElement, buttonData, dialogConfig) {
+  let buttonText = buttonData.text || DEFAULT_BUTTON_TEXT;
+  let eventObject = parseEventDataReturnConfigObject(buttonData.events, dialogConfig);
   let buttonConfig = {
     class: buttonData.class || 'button',
     on: eventObject
   };
   return createElement('button', buttonConfig, buttonText);
+}
+// 解析事件并返回事件对象
+function parseEventDataReturnConfigObject(eventData, dialogConfig) {
+  let closeEvent = () => {
+    vm.$store.commit('removeDialogConfig', { dialogId: dialogConfig.dialogId });
+  };
+  let eventObject = {};
+  if (__.isObject(eventData)) {
+    for (let key in eventData) {
+      eventObject[key] = () => {
+        eventData[key](closeEvent);
+      };
+    }
+  } else if (__.isFunction(eventData)) {
+    eventObject.click = () => {
+      eventData(closeEvent);
+    };
+  } else if (eventData === 'close') {
+    eventObject.click = closeEvent;
+  }
+  return eventObject;
 }
 </script>
 
