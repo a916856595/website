@@ -154,16 +154,21 @@ function parseEventDataReturnConfigObject(eventData, dialogConfig) {
   let eventObject = {};
   if (__.isObject(eventData)) {
     for (let key in eventData) {
-      eventObject[key] = () => {
+      eventObject[key] = ($event) => {
         eventData[key](closeEvent);
+        $event.cancelBubble = true;
       };
     }
   } else if (__.isFunction(eventData)) {
-    eventObject.click = () => {
+    eventObject.click = ($event) => {
       eventData(closeEvent);
+      $event.cancelBubble = true;
     };
   } else if (eventData === 'close') {
-    eventObject.click = closeEvent;
+    eventObject.click = ($event) => {
+      closeEvent();
+      $event.cancelBubble = true;
+    };
   }
   return eventObject;
 }

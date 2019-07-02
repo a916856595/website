@@ -36,6 +36,7 @@ export default {
           }
         }],
         maskEvents (closeDialog) {
+          console.log('冒泡')
           closeDialog();
         }
       })

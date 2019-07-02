@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 // 这里暂时不使用动态加载模块了，原因是在 .vue 文件中使用自动加载全局less 配合动态加载会导致less没有被加载
-import main from '../modules/main.vue';
 import home from '../modules/home/home.vue';
 import login from '../modules/home/login.vue';
 import register from '../modules/home/register.vue';
