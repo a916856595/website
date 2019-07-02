@@ -4,6 +4,9 @@
     <header-component></header-component>
     <dialog-component></dialog-component>
     <router-view></router-view>
+    <div>
+      <button class="button" @click="addDialog">点击增加弹出层</button>
+    </div>
   </div>
 </template>
 
@@ -16,6 +19,24 @@ export default {
     headerComponent,
     loadingAnimationComponent,
     dialogComponent
+  },
+  methods: {
+    addDialog () {
+      this.$store.commit('addDialogConfig', {
+        type: 'tip',
+        title: '提示信息',
+        content: '操作已完成！',
+        buttons: ['close', {
+          text: '延迟关闭',
+          class: 'button',
+          events: {
+            click (closeDialog) {
+              setTimeout(closeDialog, 2000);
+            }
+          }
+        }]
+      })
+    }
   }
 }
 </script>

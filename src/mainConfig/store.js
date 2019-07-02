@@ -6,7 +6,8 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
   state: {
     requestCount: 0,  //请求数量计数器
-    dialogArray: [{ type: 'tip', title: '标题', content: '内容' }] //保存弹出框配置的数组
+    dialogArray: [],  //保存弹出框配置的数组
+    dialogId: 0,      //弹出框id池
   },
   mutations: {
     addRequestCount (state) {
@@ -14,6 +15,19 @@ const store = new Vuex.Store({
     },
     reduceRequestCount (state) {
       state.requestCount--;
+    },
+    addDialogConfig (state, dialogConfig) {
+      dialogConfig.dialogId = state.dialogId;
+      state.dialogArray.push(dialogConfig);
+      state.dialogId ++;
+    },
+    removeDialogConfig (state, config) {
+      if (config.removeAll) {
+        state.dialogArray.splice(0, state.dialogArray.length);
+      } else {
+        let indexToRemove = state.dialogArray.findIndex( dialog => dialog.dialogId === config.dialogId );
+        state.dialogArray.splice(indexToRemove, 1);
+      }
     }
   }
 });

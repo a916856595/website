@@ -22,10 +22,15 @@ $color-theme-light: #deedf3;  //主题色-浅
 $color-white: white;
 
 // 边框
+$border-radius: 5px;  //默认圆角
 $border-width: 1px;  //默认边框宽度
 $border-color: #ccc;  //默认边框颜色
 $border: $border-width solid $border-color;  //默认边框
 $border-color-theme: $border-width solid $color-theme;  //主题色边框
+
+// 文本
+$font-size: 16px;
+$line-height: 20px;
 
 
 

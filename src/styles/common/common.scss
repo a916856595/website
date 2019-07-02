@@ -4,8 +4,6 @@
 .button {
   text-align: center;
   outline: none;
-  border-radius: 5px;
-  overflow: hidden;
   background-color: $color-theme;
   color: $color-white;
   border: $border-color-theme;
@@ -22,8 +20,6 @@
 .button-empty {
   text-align: center;
   outline: none;
-  border-radius: 5px;
-  overflow: hidden;
   background-color: $color-white;
   color: $color-theme;
   border: 1px solid $color-theme;
@@ -61,5 +57,10 @@
       width: 100%;
     }
   }
-  
+}
+
+// 文本
+.font {
+  font-size: $font-size;
+  line-height: $line-height;
 }
