@@ -75,7 +75,7 @@ function parseTipConfigReturnElement(createElement, dialogConfig) {
   };
   let tipChilren = [];
   if (dialogConfig.title) tipChilren.push(createHeaderElement(createElement, dialogConfig));
-  if (dialogConfig.content) tipChilren.push(createBodyElement(createElement, dialogConfig));
+  tipChilren.push(createBodyElement(createElement, dialogConfig));
 
   return createElement('div', boxConfig, tipChilren);
 }
@@ -90,6 +90,8 @@ function createHeaderElement(createElement, dialogConfig) {
 }
 // 创建内容元素
 function createBodyElement(createElement, dialogConfig) {
+  // 这里特殊处理一下，当没有内容且按钮列表为空时，展示一段默认文本
+  if (!dialogConfig.content && __.isArray(dialogConfig.buttons) && dialogConfig.buttons.length === 0) dialogConfig.content = '这是一段提示信息';
   let dialogBody = [];
   let textContent = createElement('p', { class: 'text-conetnt' }, dialogConfig.content);
   dialogBody.push(textContent);
@@ -113,9 +115,9 @@ function createButtonChildren(createElement, dialogConfig) {
   let closeEvent = () => {
     vm.$store.commit('removeDialogConfig', { dialogId: dialogConfig.dialogId });
   };
+  let defaultButtonConfig = { text: '关闭', class: 'button-empty', events: { click: closeEvent } };
   if (__.isArray(buttons)) {
     if (buttons.length) {
-      let defaultButtonConfig = { text: '关闭', class: 'button-empty', events: { click: closeEvent } };
       buttons.forEach(buttonConfig => {
         switch (buttonConfig) {
           case 'close':

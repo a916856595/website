@@ -25,16 +25,17 @@ export default {
       this.$store.commit('addDialogConfig', {
         type: 'tip',
         title: '提示信息',
-        content: '操作已完成！',
-        buttons: ['close', {
-          text: '延迟关闭',
-          class: 'button',
-          events: {
-            click (closeDialog) {
-              setTimeout(closeDialog, 2000);
-            }
-          }
-        }]
+        // content: '操作已完成！',
+        // buttons: ['close', {
+        //   text: '延迟关闭',
+        //   class: 'button',
+        //   events: {
+        //     click (closeDialog) {
+        //       setTimeout(closeDialog, 2000);
+        //     }
+        //   }
+        // }]
+        buttons: []
       })
     }
   }
