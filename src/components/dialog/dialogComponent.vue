@@ -38,6 +38,9 @@ export default {
     dialogArray (newDialogArray) {
       this.dialogConfigArray = newDialogArray;
     }
+  },
+  updated () {
+    console.log('update')
   }
 }
 
@@ -50,6 +53,7 @@ function render(createElement) {
 }
 // 创建遮罩层
 function createMaskElement(createElement, dialogConfig, children) {
+  dialogConfig.isLoading = false;
   let EventObject = parseEventDataReturnConfigObject(dialogConfig.maskEvent, dialogConfig);
   let maskConfig = {
     class: 'mask',
@@ -79,6 +83,7 @@ function parseTipConfigReturnElement(createElement, dialogConfig) {
     class: 'tip-dialog col-mb-10 col-pd-6 col-pc-3 ' + parsePositionArguments(dialogConfig),
   };
   let tipChilren = [];
+  if (dialogConfig.timeout) tipChilren.push(createloadingElement(createElement, dialogConfig));
   if (dialogConfig.title) tipChilren.push(createHeaderElement(createElement, dialogConfig));
   tipChilren.push(createBodyElement(createElement, dialogConfig));
   return createElement('div', boxConfig, tipChilren);
@@ -104,6 +109,25 @@ function parsePositionArguments(dialogConfig) {
     className = defaultClassName;
   }
   return className;
+}
+// 创建进度条
+function createloadingElement(createElement, dialogConfig) {
+  let timeout = parseAndReturnTimeoutValue(dialogConfig);
+  const tipLoadingConfig = {
+    class: 'tip-loading-box',
+  };
+  const loadingChildConfig = {
+    class: 'tip-loading-fill fill-100',
+    style: {
+      'transition-duration': timeout + 's'
+    },
+    ref: 'loadingFill'
+  };
+  let loadingChild = createElement('div', loadingChildConfig);
+  setTimeout(() => {
+    vm.$refs.loadingFill.className = 'tip-loading-fill fill-0';
+  });
+  return createElement('div', tipLoadingConfig, [loadingChild]);
 }
 // 创建头部元素
 function createHeaderElement(createElement, dialogConfig) {
@@ -199,8 +223,7 @@ function parseEventDataReturnConfigObject(eventData, dialogConfig) {
 // 解析timeout参数并创建定时器
 function createTimeout(dialogConfig) {
   if (__.isNumber(dialogConfig.timeout)) {
-    let timeout = Math.ceil(Math.abs(dialogConfig.timeout));
-    timeout = timeout > 1 ? timeout : 1;
+    let timeout = parseAndReturnTimeoutValue(dialogConfig);
     timer = setTimeout(() => {
       let timeoutEvent = parseTimeoutEvent(dialogConfig);
       timeoutEvent && timeoutEvent();
@@ -227,13 +250,18 @@ function parseTimeoutEvent(dialogConfig) {
   else if (__.isFunction(timeoutEvent)) resultEvent = () => { timeoutEvent(closeDialogEvent); clearTimer(); };
   return resultEvent;
 }
-
+// 解析timeout的值为合法的值
+function parseAndReturnTimeoutValue(dialogConfig) {
+  let timeout = Math.ceil(Math.abs(dialogConfig.timeout));
+  timeout = timeout > 1 ? timeout : 1;
+  return timeout;
+}
 </script>
 
 <style lang="scss">
   @mixin fullScreenPosition {
     width: 100%;
-    height: 100%;
+    height: 200px;
     top: 0;
     left: 0;
   }
@@ -269,6 +297,27 @@ function parseTimeoutEvent(dialogConfig) {
           }
           &.right {
             left: 70%;
+          }
+          .tip-loading-box {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            top: 0;
+            left: 0;
+            .tip-loading-fill {
+              position: absolute;
+              left: 0;
+              top: 0;
+              height: 100%;
+              background-color: $color-theme;
+              transition: width 1s linear;
+              &.fill-100 {
+                width: 100%;
+              }
+              &.fill-0 {
+                width: 0;
+              }
+            }
           }
           .tip-header {
             background-color: #f1f1f1;

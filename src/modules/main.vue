@@ -4,7 +4,7 @@
     <header-component></header-component>
     <dialog-component></dialog-component>
     <router-view></router-view>
-    <div>
+    <div style="padding-top: 200px;">
       <button class="button" @click="addDialog">点击增加弹出层</button>
     </div>
   </div>
@@ -28,7 +28,7 @@ export default {
         title: '提示信息',
         content: '操作已完成！',
         timeout: 2,
-        timeoutEvent: 1,
+        timeoutEvent: 'close',
         buttons: ['close', {
           text: '延迟关闭',
           class: 'button',
