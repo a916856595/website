@@ -6,6 +6,7 @@ function $() {
   this.isObject = isObject;
   this.isFunction = isFunction;
   this.isString = isString;
+  this.isNumber = isNumber;
   this.isRegExp = isRegExp;
   this.clone = clone;
   this.cloneDeep = cloneDeep;
@@ -48,6 +49,13 @@ function isRegExp(value) {
 
 function isString(value) {
   if (typeof value === 'string') {
+    return true;
+  }
+  return false;
+}
+
+function isNumber(value) {
+  if (typeof value === 'number') {
     return true;
   }
   return false;

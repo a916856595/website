@@ -23,19 +23,22 @@ export default {
   methods: {
     addDialog () {
       this.$store.commit('addDialogConfig', {
+        position: 'top',
         type: 'tip',
         title: '提示信息',
         content: '操作已完成！',
+        timeout: 2,
+        timeoutEvent: 1,
         buttons: ['close', {
           text: '延迟关闭',
           class: 'button',
-          events: {
+          event: {
             click (closeDialog) {
               setTimeout(closeDialog, 2000);
             }
           }
         }],
-        maskEvents (closeDialog) {
+        maskEvent (closeDialog) {
           console.log('冒泡')
           closeDialog();
         }

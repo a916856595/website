@@ -5,25 +5,21 @@
     3.新增dialogConfig时自动添加dialogId,便于后面移除指定的dialogConfig
 -->
 <script>
-let children = null;
 let vm = null;
+let timer = null;
+let maskClickEvent = null;  //用于暂存mask点击事件
+let buttonsClickEventArray = [];  //用于暂存按钮点击事件
 const DEFAULT_TIP_HEAD_TEXT = '提示';
-const DEFAULT_TIP_HEAD_CONTENT = '提示信息';
+const DEFAULT_TIP_CONTENT_TEXT = '提示信息';
 const DEFAULT_BUTTON_TEXT = '关闭';
 
 export default {
   name: 'dialog-component',
   render,
-  props: {
-
-  },
   data () {
     return {
       dialogConfigArray: [],
     }
-  },
-  methods: {
-    
   },
   mounted () {
     vm = this; // 这里保存一下实例，方便后面的函数调用store
@@ -54,14 +50,17 @@ function render(createElement) {
 }
 // 创建遮罩层
 function createMaskElement(createElement, dialogConfig, children) {
-  let EventObject = parseEventDataReturnConfigObject(dialogConfig.maskEvents, dialogConfig);
+  let EventObject = parseEventDataReturnConfigObject(dialogConfig.maskEvent, dialogConfig);
   let maskConfig = {
     class: 'mask',
-    on: EventObject
+    on: EventObject,
+    ref: 'mask'
   };
+  maskClickEvent = EventObject.click; //保存mask点击事件
+  createTimeout(dialogConfig);
   return createElement('div', maskConfig, children)
 }
-
+// 循环创建弹出层
 function loopDialogArrayToCreateChildren(createElement, dialogConfigArray) {
   let children = dialogConfigArray.map(dialogConfig => {
     let child = null;
@@ -77,13 +76,34 @@ function loopDialogArrayToCreateChildren(createElement, dialogConfigArray) {
 
 function parseTipConfigReturnElement(createElement, dialogConfig) {
   let boxConfig = {
-    class: 'tip-dialog col-mb-10 col-pd-6 col-pc-3 x-center',
+    class: 'tip-dialog col-mb-10 col-pd-6 col-pc-3 ' + parsePositionArguments(dialogConfig),
   };
   let tipChilren = [];
   if (dialogConfig.title) tipChilren.push(createHeaderElement(createElement, dialogConfig));
   tipChilren.push(createBodyElement(createElement, dialogConfig));
-
   return createElement('div', boxConfig, tipChilren);
+}
+// 解析position参数
+function parsePositionArguments(dialogConfig) {
+  const positionData = dialogConfig.position;
+  let className = '';
+  let rowArguments = ['x-center', 'left', 'right'];
+  let colArguments = ['y-center', 'top', 'bottom'];
+  let defaultClassName = rowArguments[0] + ' ' + colArguments[0];
+  if (__.isString(positionData)) {
+    if (rowArguments.indexOf(positionData) > 0) className = positionData + ' ' + colArguments[0];
+    else if (colArguments.indexOf(positionData) > 0) className = rowArguments[0] + ' ' + positionData;
+    else className = defaultClassName;
+  } else if (__.isObject(positionData)) {
+    let xPositionString = rowArguments[0];
+    let yPositionString = colArguments[0];
+    if (rowArguments.indexOf(positionData.x) > 0) xPositionString = positionData.x;
+    if (colArguments.indexOf(positionData.y) > 0) yPositionString = positionData.y;
+    className = xPositionString + ' ' + yPositionString;
+  } else {
+    className = defaultClassName;
+  }
+  return className;
 }
 // 创建头部元素
 function createHeaderElement(createElement, dialogConfig) {
@@ -97,7 +117,7 @@ function createHeaderElement(createElement, dialogConfig) {
 // 创建内容元素
 function createBodyElement(createElement, dialogConfig) {
   // 这里特殊处理一下，当没有内容且按钮列表为空时，展示一段默认文本
-  if (!dialogConfig.content && __.isArray(dialogConfig.buttons) && dialogConfig.buttons.length === 0) dialogConfig.content = DEFAULT_TIP_HEAD_CONTENT;
+  if (!dialogConfig.content && __.isArray(dialogConfig.buttons) && dialogConfig.buttons.length === 0) dialogConfig.content = DEFAULT_TIP_CONTENT_TEXT;
   let dialogBody = [];
   let textContent = createElement('p', { class: 'text-conetnt' }, dialogConfig.content);
   dialogBody.push(textContent);
@@ -118,7 +138,7 @@ function createButtonChildren(createElement, dialogConfig) {
   // 4.dialogConfig.buttons的item是对象时生成相应按钮
   let buttonList = [];
   let buttons = dialogConfig.buttons;
-  let defaultButtonConfig = { text: DEFAULT_BUTTON_TEXT, class: 'button-empty', events: 'close' };
+  let defaultButtonConfig = { text: DEFAULT_BUTTON_TEXT, class: 'button-empty', event: 'close' };
   if (__.isArray(buttons)) {
     if (buttons.length) {
       buttons.forEach(buttonConfig => {
@@ -139,39 +159,75 @@ function createButtonChildren(createElement, dialogConfig) {
 // 创建按钮
 function createButton(createElement, buttonData, dialogConfig) {
   let buttonText = buttonData.text || DEFAULT_BUTTON_TEXT;
-  let eventObject = parseEventDataReturnConfigObject(buttonData.events, dialogConfig);
+  let eventObject = parseEventDataReturnConfigObject(buttonData.event, dialogConfig);
   let buttonConfig = {
     class: buttonData.class || 'button',
     on: eventObject
   };
+  buttonsClickEventArray.push(eventObject.click); //保存按钮事件
   return createElement('button', buttonConfig, buttonText);
 }
 // 解析事件并返回事件对象
 function parseEventDataReturnConfigObject(eventData, dialogConfig) {
-  let closeEvent = () => {
+  let closeDialogEvent = () => {
     vm.$store.commit('removeDialogConfig', { dialogId: dialogConfig.dialogId });
   };
   let eventObject = {};
   if (__.isObject(eventData)) {
     for (let key in eventData) {
       eventObject[key] = ($event) => {
-        eventData[key](closeEvent);
-        $event.cancelBubble = true;
+        eventData[key](closeDialogEvent);
+        $event && ($event.stopPropagation());
+        clearTimer();
       };
     }
   } else if (__.isFunction(eventData)) {
     eventObject.click = ($event) => {
-      eventData(closeEvent);
-      $event.cancelBubble = true;
+      eventData(closeDialogEvent);
+      $event && ($event.stopPropagation());
+      clearTimer();
     };
   } else if (eventData === 'close') {
     eventObject.click = ($event) => {
-      closeEvent();
-      $event.cancelBubble = true;
+      closeDialogEvent();
+      $event && ($event.stopPropagation());
+      clearTimer();
     };
   }
   return eventObject;
 }
+// 解析timeout参数并创建定时器
+function createTimeout(dialogConfig) {
+  if (__.isNumber(dialogConfig.timeout)) {
+    let timeout = Math.ceil(Math.abs(dialogConfig.timeout));
+    timeout = timeout > 1 ? timeout : 1;
+    timer = setTimeout(() => {
+      let timeoutEvent = parseTimeoutEvent(dialogConfig);
+      timeoutEvent && timeoutEvent();
+    }, timeout * 1000);
+  }
+}
+// 清除定时器
+function clearTimer() {
+  if (timer) {
+    clearTimeout(timer);
+    timer = null;
+  }
+}
+// 解析并返回timeout事件
+function parseTimeoutEvent(dialogConfig) {
+  let closeDialogEvent = () => {
+    vm.$store.commit('removeDialogConfig', { dialogId: dialogConfig.dialogId });
+  };
+  let resultEvent = null;
+  let timeoutEvent = dialogConfig.timeoutEvent;
+  if (timeoutEvent === 'close') resultEvent = () => { closeDialogEvent(); clearTimer(); };
+  else if (timeoutEvent === 'maskEvent') resultEvent = maskClickEvent;
+  else if (__.isNumber(timeoutEvent) && timeoutEvent < buttonsClickEventArray.length && timeoutEvent > -1) resultEvent = buttonsClickEventArray[timeoutEvent];
+  else if (__.isFunction(timeoutEvent)) resultEvent = () => { timeoutEvent(closeDialogEvent); clearTimer(); };
+  return resultEvent;
+}
+
 </script>
 
 <style lang="scss">
@@ -191,10 +247,29 @@ function parseEventDataReturnConfigObject(eventData, dialogConfig) {
         background-color: rgba(0, 0, 0, .2);
         @include fullScreenPosition;
         .tip-dialog {
-          top: 20%;
+          position: absolute;
           background-color: #fff;
           box-shadow: 0 0 8px 1px rgba(0, 0, 0, .1);
+          transform: translate(-50%, -50%);
           overflow: hidden;
+          &.top {
+            top: 20%;
+          }
+          &.y-center {
+            top: 50%;
+          }
+          &.bottom {
+            top: 70%;
+          }
+          &.left {
+            left: 20%;
+          }
+          &.x-center {
+            left: 50%;
+          }
+          &.right {
+            left: 70%;
+          }
           .tip-header {
             background-color: #f1f1f1;
             border-bottom: 1px solid #ccc;
@@ -222,11 +297,6 @@ function parseEventDataReturnConfigObject(eventData, dialogConfig) {
     }
     &.hide-dialog {
       display: none;
-    }
-    .x-center {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
     }
     .text-center {
       text-align: center;
