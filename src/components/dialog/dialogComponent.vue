@@ -300,6 +300,7 @@ function createTimeoutOfAutoRun(dialogConfig) {
     dialogConfig.haveTimeout = true;
     let timeout = parseAndReturnTimeoutValue(dialogConfig);
     let timerEvent = () => {
+      // TODO 这里的20毫秒延迟是为了让transition能够生效，应想办法去掉
       setTimeout(() => {
         vm.$refs['loadingFill' + dialogConfig.dialogId].className = 'tip-loading-fill fill-0';
       }, 20);
@@ -372,7 +373,7 @@ function clearClosedDialogRelativeEvent(dialogConfig, arrayToSearch, callback) {
 <style lang="scss">
   @mixin fullScreenPosition {
     width: 100%;
-    height: 200px;
+    height: 100%;
     top: 0;
     left: 0;
   }

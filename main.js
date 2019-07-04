@@ -14,6 +14,10 @@ import methodsConstructor from './src/lib/easy.js';
 
 Vue.prototype.$request = axiosInstance.axiosInstance; //普通请求
 Vue.prototype.$tipRequest = axiosInstance.tipAxiosInstance; //带加载提示的请求
+Vue.prototype.$dialog = {
+  push: dialogConfig => { store.commit('addDialogConfig', dialogConfig); },
+  clear: () => { store.commit('removeDialogConfig', { removeAll: true }); }
+};
 
 // 创建全局变量
 global.GLOBAL = GLOBAL;

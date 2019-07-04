@@ -4,11 +4,6 @@
     <header-component></header-component>
     <dialog-component></dialog-component>
     <router-view></router-view>
-    <div style="padding-top: 200px;">
-      <button class="button" @click="addDialog('A')">点击增加弹出层A</button>
-      <button class="button" @click="addDialog('B')">点击增加弹出层B</button>
-      <button class="button" @click="addDialog('C')">点击增加弹出层C</button>
-    </div>
   </div>
 </template>
 
@@ -30,8 +25,8 @@ export default {
   methods: {
     addDialog (name) {
       let vm = this;
-      this.$store.commit('addDialogConfig', {
-        position: 'bottom',
+      this.$dialog.push({
+        position: 'top',
         type: 'tip',
         title: '提示信息',
         content: '操作已完成！',
