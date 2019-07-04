@@ -31,7 +31,7 @@ export default {
     addDialog (name) {
       let vm = this;
       this.$store.commit('addDialogConfig', {
-        position: 'top',
+        position: 'bottom',
         type: 'tip',
         title: '提示信息',
         content: '操作已完成！',

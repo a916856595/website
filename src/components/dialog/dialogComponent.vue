@@ -43,9 +43,15 @@ export default {
     }
   },
   updated () {
+    timerArray.forEach(timerInfo => {
+      if (!timerInfo.isRunning) {
+        timerInfo.isRunning = true;
+        timerInfo.event();
+      }
+    });
     console.log(timerArray);
-    console.log(maskClickEventArray);
-    console.log(buttonClickEventArray);
+    // console.log(maskClickEventArray);
+    // console.log(buttonClickEventArray);
   }
 }
 
@@ -134,6 +140,7 @@ function parseTipConfigReturnElement(createElement, dialogConfig) {
     class: 'tip-dialog col-mb-10 col-pd-6 col-pc-3 ' + parsePositionArguments(dialogConfig),
   };
   let tipChilren = [];
+  if (dialogConfig.type === 'tip') tipChilren.push(createloadingElement(createElement, dialogConfig));
   if (dialogConfig.title) tipChilren.push(createHeaderElement(createElement, dialogConfig));
   tipChilren.push(createBodyElement(createElement, dialogConfig));
   return createElement('div', boxConfig, tipChilren);
@@ -171,14 +178,11 @@ function createloadingElement(createElement, dialogConfig) {
   const loadingChildConfig = {
     class: 'tip-loading-fill fill-100',
     style: {
-      'transition-duration': timeout + 's'
+      'transition-duration': timeout - 0.02 + 's'
     },
-    ref: 'loadingFill'
+    ref: 'loadingFill' + dialogConfig.dialogId
   };
   let loadingChild = createElement('div', loadingChildConfig);
-  setTimeout(() => {
-    vm.$refs.loadingFill.className = 'tip-loading-fill fill-0';
-  });
   return createElement('div', tipLoadingConfig, [loadingChild]);
 }
 
@@ -244,7 +248,7 @@ function createButton(createElement, buttonData, dialogConfig, buttonIndex) {
     class: buttonData.class || 'button',
     on: eventObject
   };
-  //保存click按钮事件，用于timeout调用
+  // 保存click按钮事件，用于timeout调用
   if (checkButtonIndexIsValid(dialogConfig) && buttonIndex === dialogConfig.timeoutEvent) {
     saveClickEventToArray(eventObject.click, dialogConfig, buttonClickEventArray);
     dialogConfig.haveButtonClickEvent = true;
@@ -252,6 +256,7 @@ function createButton(createElement, buttonData, dialogConfig, buttonIndex) {
   return createElement('button', buttonConfig, buttonText);
 }
 
+// 校验timeoutEvent参数是否是一个有效的按钮索引
 function checkButtonIndexIsValid(dialogConfig) {
   let valueToCheck = dialogConfig.timeoutEvent;
   let isValid = true;
@@ -294,15 +299,24 @@ function createTimeoutOfAutoRun(dialogConfig) {
   if (__.isNumber(dialogConfig.timeout)) {
     dialogConfig.haveTimeout = true;
     let timeout = parseAndReturnTimeoutValue(dialogConfig);
-    let timerId = setTimeout(() => {
-      let timeoutEvent = parseTimeoutEvent(dialogConfig);
-      clearClosedDialogRelativeInfo(dialogConfig);
-      timeoutEvent && timeoutEvent();
-    }, timeout * 1000);
+    let timerEvent = () => {
+      setTimeout(() => {
+        vm.$refs['loadingFill' + dialogConfig.dialogId].className = 'tip-loading-fill fill-0';
+      }, 20);
+      let timerId = setTimeout(() => {
+        let timeoutEvent = parseTimeoutEvent(dialogConfig);
+        clearClosedDialogRelativeInfo(dialogConfig);
+        timeoutEvent && timeoutEvent();
+      }, timeout * 1000);
+      let indexOfChangeTimerId = timerArray.findIndex(timerInfo => timerInfo.dialogId === dialogConfig.dialogId);
+      timerArray[indexOfChangeTimerId].timerId = timerId;
+    };
     let timerInfo = {
       dialogId: dialogConfig.dialogId,
-      timerId: timerId
-    }
+      timerId: null,
+      isRunning: false,
+      event: timerEvent
+    };
     timerArray.push(timerInfo);
   }
 }
@@ -358,7 +372,7 @@ function clearClosedDialogRelativeEvent(dialogConfig, arrayToSearch, callback) {
 <style lang="scss">
   @mixin fullScreenPosition {
     width: 100%;
-    height: 100%;
+    height: 200px;
     top: 0;
     left: 0;
   }
