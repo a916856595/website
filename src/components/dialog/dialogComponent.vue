@@ -6,9 +6,12 @@
 -->
 <script>
 let vm = null;
-let timer = null;
-let maskClickEvent = null;  //用于暂存mask点击事件
-let buttonsClickEventArray = [];  //用于暂存按钮点击事件
+let createElement = null;
+let dialogComponentChildren = [];  //用于保存diaglog VNode节点
+let dialogConfigArrayCache = [];   //用于缓存dialogConfig,在watch方法中进行比较
+let timerArray = [];               //用于暂存定时器信息
+let maskClickEventArray = [];      //用于暂存mask点击事件
+let buttonClickEventArray = [];    //用于暂存按钮点击事件
 const DEFAULT_TIP_HEAD_TEXT = '提示';
 const DEFAULT_TIP_CONTENT_TEXT = '提示信息';
 const DEFAULT_BUTTON_TEXT = '关闭';
@@ -16,66 +19,114 @@ const DEFAULT_BUTTON_TEXT = '关闭';
 export default {
   name: 'dialog-component',
   render,
-  data () {
-    return {
-      dialogConfigArray: [],
-    }
-  },
   mounted () {
     vm = this; // 这里保存一下实例，方便后面的函数调用store
   },
   computed: {
-    dialogArray () {
-      return this.$store.state.dialogArray;
+    dialogConfigArray () {
+      return this.$store.state.dialogConfigArray;
     },
     dialogClass () {
-      let length = this.$store.state.dialogArray.length;
+      let length = this.$store.state.dialogConfigArray.length;
       if (length) return 'show-dialog';
       else return 'hide-dialog';
     }
   },
-  watch: {
-    dialogArray (newDialogArray) {
-      this.dialogConfigArray = newDialogArray;
+  watch: { //watch中比较diaglogConfigArray的变化,并根据变化增加或删除对应的dialog VNode
+    dialogConfigArray (newDialogConfigArray) {
+      let changesObject = compareDialogConfigArrayChange(newDialogConfigArray, dialogConfigArrayCache);
+      let configsOfAdd = changesObject.configsOfAdd;
+      let configsOfRemove = changesObject.configsOfRemove;
+      if (configsOfAdd.length)  addNewDialog(configsOfAdd);
+      if (configsOfRemove.length) removeInvalidDialog(configsOfRemove);
+      dialogConfigArrayCache = __.cloneDeep(newDialogConfigArray); //更新dialog配置副本
     }
   },
   updated () {
-    console.log('update')
+    console.log(timerArray);
+    console.log(maskClickEventArray);
+    console.log(buttonClickEventArray);
   }
 }
 
-function render(createElement) {
+function render(create) {
+  if (!createElement) createElement = create;
   const dialogComponentConfig = {
     class: 'dialog-component '+ this.dialogClass
   };
-  let dialogComponentChildren = loopDialogArrayToCreateChildren(createElement, this.dialogConfigArray);
   return createElement('div', dialogComponentConfig, dialogComponentChildren);
 }
-// 创建遮罩层
-function createMaskElement(createElement, dialogConfig, children) {
-  dialogConfig.isLoading = false;
-  let EventObject = parseEventDataReturnConfigObject(dialogConfig.maskEvent, dialogConfig);
+
+// 增加新的弹出层
+function addNewDialog(configsOfAdd) {
+  configsOfAdd.forEach(dialogConfig => {
+    let child = createDialogChild(createElement, dialogConfig);
+    dialogComponentChildren.push(child);
+    createTimeoutOfAutoRun(dialogConfig);
+  });
+}
+
+// 移除无效的弹出层
+function removeInvalidDialog(configsOfRemove) {
+  configsOfRemove.forEach(config => {
+    var indexToRemove = dialogComponentChildren.findIndex(configOfSearch => configOfSearch.dialogId === config.dialogId);
+    dialogComponentChildren.splice(indexToRemove, 1);
+  });
+}
+
+// 创建弹出层元素,每个弹出层自带一个遮罩层
+function createDialogChild(createElement, dialogConfig) {
+  let eventObject = parseEventDataReturnConfigObject(dialogConfig.maskEvent, dialogConfig);
   let maskConfig = {
     class: 'mask',
-    on: EventObject,
-    ref: 'mask'
+    on: eventObject
   };
-  maskClickEvent = EventObject.click; //保存mask点击事件
-  createTimeout(dialogConfig);
-  return createElement('div', maskConfig, children)
+  saveClickEventToArray(eventObject.click, dialogConfig, maskClickEventArray); //保存遮罩层点击事件
+  let child = parseTipConfigReturnElement(createElement, dialogConfig); 
+  return createElement('div', maskConfig, [child]);
 }
-// 循环创建弹出层
-function loopDialogArrayToCreateChildren(createElement, dialogConfigArray) {
-  let children = dialogConfigArray.map(dialogConfig => {
-    let child = null;
-    switch (dialogConfig.type) {
-      case 'tip': 
-        child = parseTipConfigReturnElement(createElement, dialogConfig); 
-        break;
-    }
-    return createMaskElement(createElement, dialogConfig, [child]);
-  });
-  return children;
+
+// 比较并返回新旧dialogConfigAarry的差异
+function compareDialogConfigArrayChange(newConfigArray, oldConfigArray) {
+  let newConfigLength = newConfigArray.length;
+  let oldConfigLength = oldConfigArray.length;
+  let configsOfAdd = [];
+  let configsOfRemove = [];
+  if (newConfigLength && !oldConfigLength) configsOfAdd = newConfigArray;
+  else if (!newConfigLength && oldConfigLength) configsOfRemove = oldConfigArray;
+  else {
+    newConfigArray.forEach(newConfig => {
+      let isAdd = true;
+      oldConfigArray.forEach(oldConfig => {
+        if (oldConfig.dialogId === newConfig.dialogId) {
+          isAdd = false;
+        }
+      });
+      if (isAdd) configsOfAdd.push(newConfig);
+    });
+    oldConfigArray.forEach(newConfig => {
+      let isRemove = true;
+      newConfigArray.forEach(oldConfig => {
+        if (oldConfig.dialogId === newConfig.dialogId) {
+          isRemove = false;
+        }
+      });
+      if (isRemove) configsOfRemove.push(newConfig);
+    });
+  }
+  return {
+    configsOfAdd,
+    configsOfRemove
+  };
+}
+
+// 保存事件在适当时调用
+function saveClickEventToArray(event, dialogConfig, arrayToPush) {
+  let eventInfo = {
+    dialogId: dialogConfig.dialogId,
+    event: event
+  };
+  arrayToPush.push(eventInfo);
 }
 
 function parseTipConfigReturnElement(createElement, dialogConfig) {
@@ -83,11 +134,11 @@ function parseTipConfigReturnElement(createElement, dialogConfig) {
     class: 'tip-dialog col-mb-10 col-pd-6 col-pc-3 ' + parsePositionArguments(dialogConfig),
   };
   let tipChilren = [];
-  if (dialogConfig.timeout) tipChilren.push(createloadingElement(createElement, dialogConfig));
   if (dialogConfig.title) tipChilren.push(createHeaderElement(createElement, dialogConfig));
   tipChilren.push(createBodyElement(createElement, dialogConfig));
   return createElement('div', boxConfig, tipChilren);
 }
+
 // 解析position参数
 function parsePositionArguments(dialogConfig) {
   const positionData = dialogConfig.position;
@@ -110,6 +161,7 @@ function parsePositionArguments(dialogConfig) {
   }
   return className;
 }
+
 // 创建进度条
 function createloadingElement(createElement, dialogConfig) {
   let timeout = parseAndReturnTimeoutValue(dialogConfig);
@@ -129,6 +181,7 @@ function createloadingElement(createElement, dialogConfig) {
   });
   return createElement('div', tipLoadingConfig, [loadingChild]);
 }
+
 // 创建头部元素
 function createHeaderElement(createElement, dialogConfig) {
   const tipHeaderConfig = {
@@ -138,6 +191,7 @@ function createHeaderElement(createElement, dialogConfig) {
   const tipHeaderContentArguments = ['div', { class: 'tip-header-content text-center' }, dialogTitle];
   return createElement('div', tipHeaderConfig, [createElement.apply(null, tipHeaderContentArguments)]);
 }
+
 // 创建内容元素
 function createBodyElement(createElement, dialogConfig) {
   // 这里特殊处理一下，当没有内容且按钮列表为空时，展示一段默认文本
@@ -153,6 +207,7 @@ function createBodyElement(createElement, dialogConfig) {
   let tipBodyContent = createElement('div', { class: 'tip-body-content' }, dialogBody);
   return createElement('div', { class: 'tip-body' }, [tipBodyContent]);
 }
+
 // 创建按钮列表
 function createButtonChildren(createElement, dialogConfig) { 
   // 按钮列表的处理逻辑：
@@ -165,36 +220,52 @@ function createButtonChildren(createElement, dialogConfig) {
   let defaultButtonConfig = { text: DEFAULT_BUTTON_TEXT, class: 'button-empty', event: 'close' };
   if (__.isArray(buttons)) {
     if (buttons.length) {
-      buttons.forEach(buttonConfig => {
+      buttons.forEach((buttonConfig, buttonIndex) => {
         switch (buttonConfig) {
           case 'close':
-             buttonList.push(createButton(createElement, defaultButtonConfig, dialogConfig));
+             buttonList.push(createButton(createElement, defaultButtonConfig, dialogConfig, buttonIndex));
              break;
           default:
-            if (__.isObject(buttonConfig)) buttonList.push(createButton(createElement, buttonConfig, dialogConfig)); 
+            if (__.isObject(buttonConfig)) buttonList.push(createButton(createElement, buttonConfig, dialogConfig, buttonIndex)); 
         }
       });
     }
   } else {
-    buttonList.push(createButton(createElement, defaultButtonConfig, dialogConfig));
+    buttonList.push(createButton(createElement, defaultButtonConfig, dialogConfig, buttonIndex));
   }
   return buttonList;
 }
+
 // 创建按钮
-function createButton(createElement, buttonData, dialogConfig) {
+function createButton(createElement, buttonData, dialogConfig, buttonIndex) {
   let buttonText = buttonData.text || DEFAULT_BUTTON_TEXT;
   let eventObject = parseEventDataReturnConfigObject(buttonData.event, dialogConfig);
   let buttonConfig = {
     class: buttonData.class || 'button',
     on: eventObject
   };
-  buttonsClickEventArray.push(eventObject.click); //保存按钮事件
+  //保存click按钮事件，用于timeout调用
+  if (checkButtonIndexIsValid(dialogConfig) && buttonIndex === dialogConfig.timeoutEvent) {
+    saveClickEventToArray(eventObject.click, dialogConfig, buttonClickEventArray);
+    dialogConfig.haveButtonClickEvent = true;
+  };
   return createElement('button', buttonConfig, buttonText);
 }
+
+function checkButtonIndexIsValid(dialogConfig) {
+  let valueToCheck = dialogConfig.timeoutEvent;
+  let isValid = true;
+  if (!__.isNumber(valueToCheck) || valueToCheck < 0 || valueToCheck >= dialogConfig.buttons.length) {
+    isValid = false;
+  }
+  return isValid;
+}
+
 // 解析事件并返回事件对象
 function parseEventDataReturnConfigObject(eventData, dialogConfig) {
   let closeDialogEvent = () => {
     vm.$store.commit('removeDialogConfig', { dialogId: dialogConfig.dialogId });
+    clearClosedDialogRelativeInfo(dialogConfig);
   };
   let eventObject = {};
   if (__.isObject(eventData)) {
@@ -202,66 +273,92 @@ function parseEventDataReturnConfigObject(eventData, dialogConfig) {
       eventObject[key] = ($event) => {
         eventData[key](closeDialogEvent);
         $event && ($event.stopPropagation());
-        clearTimer();
       };
     }
   } else if (__.isFunction(eventData)) {
     eventObject.click = ($event) => {
       eventData(closeDialogEvent);
       $event && ($event.stopPropagation());
-      clearTimer();
     };
   } else if (eventData === 'close') {
     eventObject.click = ($event) => {
       closeDialogEvent();
       $event && ($event.stopPropagation());
-      clearTimer();
     };
   }
   return eventObject;
 }
+
 // 解析timeout参数并创建定时器
-function createTimeout(dialogConfig) {
+function createTimeoutOfAutoRun(dialogConfig) {
   if (__.isNumber(dialogConfig.timeout)) {
+    dialogConfig.haveTimeout = true;
     let timeout = parseAndReturnTimeoutValue(dialogConfig);
-    timer = setTimeout(() => {
+    let timerId = setTimeout(() => {
       let timeoutEvent = parseTimeoutEvent(dialogConfig);
+      clearClosedDialogRelativeInfo(dialogConfig);
       timeoutEvent && timeoutEvent();
     }, timeout * 1000);
+    let timerInfo = {
+      dialogId: dialogConfig.dialogId,
+      timerId: timerId
+    }
+    timerArray.push(timerInfo);
   }
 }
-// 清除定时器
-function clearTimer() {
-  if (timer) {
-    clearTimeout(timer);
-    timer = null;
-  }
-}
+
 // 解析并返回timeout事件
 function parseTimeoutEvent(dialogConfig) {
   let closeDialogEvent = () => {
     vm.$store.commit('removeDialogConfig', { dialogId: dialogConfig.dialogId });
+    clearClosedDialogRelativeInfo(dialogConfig);
   };
   let resultEvent = null;
   let timeoutEvent = dialogConfig.timeoutEvent;
-  if (timeoutEvent === 'close') resultEvent = () => { closeDialogEvent(); clearTimer(); };
-  else if (timeoutEvent === 'maskEvent') resultEvent = maskClickEvent;
-  else if (__.isNumber(timeoutEvent) && timeoutEvent < buttonsClickEventArray.length && timeoutEvent > -1) resultEvent = buttonsClickEventArray[timeoutEvent];
-  else if (__.isFunction(timeoutEvent)) resultEvent = () => { timeoutEvent(closeDialogEvent); clearTimer(); };
+  if (timeoutEvent === 'close') resultEvent = () => closeDialogEvent();
+  else if (timeoutEvent === 'maskEvent') resultEvent = maskClickEventArray.find(eventInfo => eventInfo.dialogId === dialogConfig.dialogId).event;
+  else if (__.isNumber(timeoutEvent)) resultEvent = buttonClickEventArray.find(eventInfo => eventInfo.dialogId === dialogConfig.dialogId).event;
+  else if (__.isFunction(timeoutEvent)) resultEvent = () => timeoutEvent(closeDialogEvent);
   return resultEvent;
 }
+
 // 解析timeout的值为合法的值
 function parseAndReturnTimeoutValue(dialogConfig) {
   let timeout = Math.ceil(Math.abs(dialogConfig.timeout));
   timeout = timeout > 1 ? timeout : 1;
   return timeout;
 }
+
+// 关闭弹出层时清除相关内容
+function clearClosedDialogRelativeInfo(dialogConfig) {
+  if (dialogConfig.haveTimeout) clearTimeoutOfAutoRun(dialogConfig);
+  if (dialogConfig.haveButtonClickEvent) clearClosedDialogRelativeEvent(dialogConfig, buttonClickEventArray, () => dialogConfig.haveButtonClickEvent = false);
+  clearClosedDialogRelativeEvent(dialogConfig, maskClickEventArray);
+}
+
+// 清除定时器
+function clearTimeoutOfAutoRun(dialogConfig) {
+  let indexToDelete = timerArray.findIndex(timerInfo => timerInfo.dialogId === dialogConfig.dialogId);
+  if (indexToDelete > -1) {
+    clearTimeout(timerArray[indexToDelete].timerId);
+    dialogConfig.haveTimeout = false;
+    timerArray.splice(indexToDelete, 1);
+  }
+}
+
+function clearClosedDialogRelativeEvent(dialogConfig, arrayToSearch, callback) {
+  let indexToDelete = arrayToSearch.findIndex(eventInfo => eventInfo.dialogId === dialogConfig.dialogId);
+  if (indexToDelete > -1) {
+    callback && callback();
+    arrayToSearch.splice(indexToDelete, 1);
+  }
+}
 </script>
 
 <style lang="scss">
   @mixin fullScreenPosition {
     width: 100%;
-    height: 200px;
+    height: 100%;
     top: 0;
     left: 0;
   }

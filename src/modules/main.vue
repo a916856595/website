@@ -5,7 +5,9 @@
     <dialog-component></dialog-component>
     <router-view></router-view>
     <div style="padding-top: 200px;">
-      <button class="button" @click="addDialog">点击增加弹出层</button>
+      <button class="button" @click="addDialog('A')">点击增加弹出层A</button>
+      <button class="button" @click="addDialog('B')">点击增加弹出层B</button>
+      <button class="button" @click="addDialog('C')">点击增加弹出层C</button>
     </div>
   </div>
 </template>
@@ -20,26 +22,35 @@ export default {
     loadingAnimationComponent,
     dialogComponent
   },
+  data () {
+    return {
+      number: 1
+    }
+  },
   methods: {
-    addDialog () {
+    addDialog (name) {
+      let vm = this;
       this.$store.commit('addDialogConfig', {
         position: 'top',
         type: 'tip',
         title: '提示信息',
         content: '操作已完成！',
-        timeout: 2,
-        timeoutEvent: 'close',
+        timeout: 3,
+        timeoutEvent: 1,
         buttons: ['close', {
           text: '延迟关闭',
           class: 'button',
           event: {
             click (closeDialog) {
-              setTimeout(closeDialog, 2000);
+              console.log(name)
+              // setTimeout(function () {
+                closeDialog();
+              // }, 2000);
             }
           }
         }],
         maskEvent (closeDialog) {
-          console.log('冒泡')
+          console.log('mask' + name);
           closeDialog();
         }
       })
