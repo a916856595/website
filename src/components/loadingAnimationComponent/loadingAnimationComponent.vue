@@ -58,7 +58,6 @@ export default {
   mounted () {
     this.$refs.fill.addEventListener('transitionend', () => {  //由于transitionend时无法保证请求池内没有请求了，因此加定时器去判断当前请求是否都结束了
       if (this.classOfProgress === 'fill-100') {
-        console.log(this.requestCount)
         if (this.requestCount) {
           this.timer = setInterval(() => {
             if (!this.requestCount) {
@@ -66,7 +65,7 @@ export default {
               clearInterval(this.timer);
               this.timer = null;
             }
-          }, 100);
+          }, 20);
         } else {
           this.endTransition();
         }
@@ -80,7 +79,7 @@ export default {
   .loading-animation-component {
     position: fixed;
     width: 100%;
-    height: 100%;
+    height: 3px;
     top: 0;
     left: 0;
     background-color: #fff;

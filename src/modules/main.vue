@@ -10,7 +10,7 @@
 <script>
 import headerComponent from '@components/headerComponent/headerComponent.vue';
 import loadingAnimationComponent from '@components/loadingAnimationComponent/loadingAnimationComponent.vue';
-import dialogComponent from '@components/dialog/dialogComponent.vue';
+import dialogComponent from '@components/dialogComponent/dialogComponent.vue';
 export default {
   components: {
     headerComponent,

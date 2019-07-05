@@ -89,6 +89,7 @@ export default {
         this.isFieldAllRight = true;
         this.register();
       }, (errorObj) => {
+        console.log(errorObj)
         this.isFieldAllRight = false;
       });
     },
@@ -115,7 +116,7 @@ export default {
               closeDialog();
               vm.$router.push('/home');
             }
-          }
+          };
           vm.$dialog.push(dialogConfig);
         } else {
           console.log('注册失败')
