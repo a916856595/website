@@ -18,14 +18,15 @@
         </ul>
       </div>
     </div>
+    <div class="menu-list-row-mask" @click="closeSideMenu()" v-if="isShowSideMenu"></div>
     <div :class="['menu-list-row-box', 'mobile', {'show-side-menu': isShowSideMenu}]">
       <ul class="menu-list-row">
-        <router-link tag="li" to="/register" class="hover-button">
+        <li @click="closeSideMenu('/register')" class="hover-button">
           <span>注册</span>
-        </router-link>
-        <router-link tag="li" to="/login" class="hover-button">
+        </li>
+        <li tag="li" @click="closeSideMenu('/login')" class="hover-button">
           <span>登录</span>
-        </router-link>
+        </li>
       </ul>
     </div>
   </div>
@@ -42,6 +43,15 @@ export default {
   methods: {
     toggleSideMenu () {
       this.isShowSideMenu = !this.isShowSideMenu;
+    },
+    closeSideMenu (path) {
+      this.isShowSideMenu = false;
+      if (path) this.$router.push(path);
+    }
+  },
+  computed: {
+    tempAccountInfo () {
+      return this.$store.state.tempAccountInfo;
     }
   }
 }
@@ -73,6 +83,14 @@ export default {
           }
         }
       }
+    }
+    .menu-list-row-mask {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 97;
     }
     .menu-list-row-box {
       overflow: hidden;

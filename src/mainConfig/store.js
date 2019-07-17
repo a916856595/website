@@ -8,6 +8,7 @@ const store = new Vuex.Store({
     requestCount: 0,  //请求数量计数器
     dialogConfigArray: [],  //保存弹出框配置的数组
     dialogId: 0,      //弹出框id池
+    tempAccountInfo: {}
   },
   mutations: {
     addRequestCount (state) {
@@ -27,6 +28,9 @@ const store = new Vuex.Store({
         let indexToRemove = state.dialogConfigArray.findIndex( dialog => dialog.dialogId === config.dialogId );
         state.dialogConfigArray.splice(indexToRemove, 1);
       }
+    },
+    updataTempAccountInfo (state, data) {
+      state.tempAccountInfo = data;
     }
   }
 });

@@ -9,10 +9,11 @@ function clear() {
   store.commit('removeDialogConfig', { removeAll: true });
 }
 
-function showTip(content, secondParam) {
+function showTip(content, secondParam, thirdParam) {
   let timeout,closeEvent,buttonParams;
   if (typeof(secondParam) === 'number') timeout = secondParam;
   if (typeof(secondParam) === 'function') closeEvent = secondParam;
+  if (typeof(thirdParam) === 'function') closeEvent = thirdParam;
   if (closeEvent) {
     buttonParams = {
       text: '确认',

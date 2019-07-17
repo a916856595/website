@@ -51,7 +51,18 @@ export default {
         password: this.accountInfo.password
       };
       this.$tipRequest.post('user/login', data).then(result => {
-        this.$dialog.showTip('成功', (close) => {console.log('close');close()})
+        if (result.code === 0) {
+          this.$dialog.showTip('成功', 1, close => {
+            this.$store.commit('updataTempAccountInfo', {
+              nickName: result.nickName,
+              id: result.userId
+            });
+            this.$router.push('/home');
+            close();
+          });
+        } else {
+          this.$dialog.showTip('账号或密码不正确', 2);
+        }
       }, err => {
 
       });
