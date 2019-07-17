@@ -49,9 +49,6 @@ export default {
         timerInfo.event();
       }
     });
-    console.log(timerArray);
-    // console.log(maskClickEventArray);
-    // console.log(buttonClickEventArray);
   }
 }
 
@@ -140,7 +137,7 @@ function parseTipConfigReturnElement(createElement, dialogConfig) {
     class: 'tip-dialog col-mb-10 col-pd-6 col-pc-3 ' + parsePositionArguments(dialogConfig),
   };
   let tipChilren = [];
-  if (dialogConfig.type === 'tip') tipChilren.push(createloadingElement(createElement, dialogConfig));
+  if (dialogConfig.type === 'tip' && dialogConfig.timeout) tipChilren.push(createloadingElement(createElement, dialogConfig));
   if (dialogConfig.title) tipChilren.push(createHeaderElement(createElement, dialogConfig));
   tipChilren.push(createBodyElement(createElement, dialogConfig));
   return createElement('div', boxConfig, tipChilren);

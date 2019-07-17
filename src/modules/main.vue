@@ -1,6 +1,6 @@
 <template>
   <div class="main-page">
-    <loading-animation-component></loading-animation-component>
+    <loading-animation-component mode="speed"></loading-animation-component>
     <header-component></header-component>
     <dialog-component></dialog-component>
     <router-view></router-view>
@@ -24,31 +24,7 @@ export default {
   },
   methods: {
     addDialog (name) {
-      let vm = this;
-      this.$dialog.push({
-        position: 'top',
-        type: 'tip',
-        title: '提示信息',
-        content: '操作已完成！',
-        timeout: 3,
-        timeoutEvent: 1,
-        buttons: ['close', {
-          text: '延迟关闭',
-          class: 'button',
-          event: {
-            click (closeDialog) {
-              console.log(name)
-              // setTimeout(function () {
-                closeDialog();
-              // }, 2000);
-            }
-          }
-        }],
-        maskEvent (closeDialog) {
-          console.log('mask' + name);
-          closeDialog();
-        }
-      })
+
     }
   }
 }

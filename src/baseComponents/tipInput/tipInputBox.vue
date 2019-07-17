@@ -13,6 +13,10 @@ export default {
   props: {
     checkComplete: {
       type: Function
+    },
+    forceCheck: { //当此值为true时将强制触发tip-input-component的校验方法
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -28,7 +32,9 @@ export default {
       this.fieldIsAllRight = true;
       this.$children
         .filter(item => item.$options.name === 'tip-input')
-        .forEach(item => promiseArray.push(item.updateInputMessageComponent()));
+        .forEach(item => {
+          if (this.forceCheck || !item.isValid) promiseArray.push(item.updateInputMessageComponent());
+        });
       return new Promise((resolve, reject) => {
         Promise.all(promiseArray).then(validArray => {
           let isAllRight = true;

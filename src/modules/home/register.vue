@@ -3,7 +3,7 @@
     <div class="col-mb-12 col-pd-6 col-pd-offset-3 col-pc-4 col-pc-offset-4">
       <div class="register-content mb-content">
         <tip-input-box>
-          <tip-input label="请输入账号" v-model="registerInfo.userName" :rules="userNameRules" lazy-check="1000" required></tip-input>
+          <tip-input label="请输入账号" v-model="registerInfo.account" :rules="accountRules" lazy-check="1000" required></tip-input>
           <tip-input type="password" label="请输入密码" v-model="registerInfo.password" :rules="passwordRules" lazy-check="1000" required></tip-input>
           <tip-input type="password" label="请再次输入密码" v-model="registerInfo.passwordRepeat" :rules="passwordRepeatRules" lazy-check="1000" required></tip-input>
           <tip-input label="请输入昵称" v-model="registerInfo.nickName" lazy-check></tip-input>
@@ -31,12 +31,12 @@ export default {
     return {
       isFieldAllRight: false,
       registerInfo: {
-        userName: '',
+        account: '',
         password: '',
         passwordRepeat: '',
         nickName: ''
       },
-      userNameRules: [{
+      accountRules: [{
         message: '账号的长度不能低于6',
         rule: /^[\s\S]{6,}$/
       }, {
@@ -46,9 +46,9 @@ export default {
         message: '账号是否可用',
         rule: () => {
           return new Promise((resolve, reject) => {
-            let userName = vm.registerInfo.userName;
-            if (userName === '' || userName === undefined) return reject('请输入账号后进行重名校验');
-            if (userName.length < 6 || userName.length > 18) return reject('请输入符合规则的账号后进行重名校验');
+            let account = vm.registerInfo.account;
+            if (account === '' || account === undefined) return reject('请输入账号后进行重名校验');
+            if (account.length < 6 || account.length > 18) return reject('请输入符合规则的账号后进行重名校验');
             this.checkAccountIsRepeat().then(result => {
               if (result.usable === 'usable') resolve('账号可用');
               reject('账号不可用');
@@ -87,7 +87,7 @@ export default {
     startCheck (checkEvent) {
       checkEvent().then((resultObj) => {
         this.isFieldAllRight = true;
-        this.register();
+        this.requestRegister();
       }, (errorObj) => {
         console.log(errorObj)
         this.isFieldAllRight = false;
@@ -96,10 +96,10 @@ export default {
     checkAccountIsRepeat () {
       var vm = this;
       return new Promise((resolve, reject) => {
-        vm.$request.get('user/checkUserName', { userName: vm.registerInfo.userName }).then(result => resolve(result), err => reject(err));
+        vm.$request.get('user/checkAccount', { account: vm.registerInfo.account }).then(result => resolve(result), err => reject(err));
       });
     },
-    register () {
+    requestRegister () {
       if (!this.isFieldAllRight) return alert('校验未通过');
       var vm = this;
       vm.$tipRequest.post('user/sign', vm.registerInfo).then(result => {

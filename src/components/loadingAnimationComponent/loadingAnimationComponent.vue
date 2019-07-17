@@ -16,6 +16,12 @@
 <script>
 export default {
   name: 'loading-animation-component',
+  props: {
+    mode: {  //当前进度条的展现形式  1.speed 请求结束时立即关闭遮罩层 2.其他有后续动画，但影响页面操作
+      type: String,
+      default: 'speed'
+    }
+  },
   data () {
     return {
       isShowMask: false,
@@ -52,7 +58,7 @@ export default {
   watch: {
     requestCount (newCount, oldCount) {
       if (newCount !== 0 && oldCount === 0) this.startProgress();
-      if (newCount === 0 && oldCount !== 0) this.completeProgress();
+      if (newCount === 0 && oldCount !== 0) this.mode === 'speed' ? this.endTransition() : this.completeProgress();
     }
   },
   mounted () {
@@ -79,7 +85,7 @@ export default {
   .loading-animation-component {
     position: fixed;
     width: 100%;
-    height: 3px;
+    height: 100%;
     top: 0;
     left: 0;
     background-color: #fff;

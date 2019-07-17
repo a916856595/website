@@ -70,7 +70,8 @@ export default {
       isActive: false,
       isFocused: false,
       hasError: false,
-      isChecked: false
+      isChecked: false,
+      isValid: false   //缓存当前表单是否已经校验通过
     }
   },
   methods: {
@@ -108,8 +109,11 @@ export default {
       return new Promise((resolve) => {
         this.isFocused = true;
         this.isChecked = true;
-        this.$children.filter(item => item.$options.name === 'tip-input-message')[0].checkRules().then(isValid => resolve(isValid));  //由于是独立组件，直接获取子组件的方法
+        this.$children.filter(item => item.$options.name === 'tip-input-message')[0].checkRules().then(isValid => this.changeIsValid(isValid));  //由于是独立组件，直接获取子组件的方法
       });
+    },
+    changeIsValid (isValid) {
+      this.isValid = isValid;
     }
   },
   mounted () {
@@ -132,7 +136,7 @@ export default {
           vm.value ? null : vm.textClass = 'placeholder';
           vm.isActive = false;
           if (vm.lazyCheck === '') {
-            vm.updateInputMessageComponent().then(isValid => isValid);  //当组件有lazy-check属性而没有赋值的时候在失焦时校验
+            vm.updateInputMessageComponent().then(isValid => vm.changeIsValid(isValid));  //当组件有lazy-check属性而没有赋值的时候在失焦时校验
           }
           vm.$emit('blur', event);
         },
@@ -157,17 +161,17 @@ export default {
 
       // 当绑定值变化时，如果Input没有焦点，说明是js改变了值，直接校验,否则判断是否需要懒校验
       if (!this.isActive) {
-        this.updateInputMessageComponent().then(isValid => isValid);
+        this.updateInputMessageComponent().then(isValid => this.changeIsValid(isValid));
       } else {
         var timeout = Number(this.lazyCheck);
         if (timeout > 0) {
           if (timer) clearTimeout(timer);
           timer = setTimeout(() => {
-            this.updateInputMessageComponent().then(isValid => isValid);
+            this.updateInputMessageComponent().then(isValid => this.changeIsValid(isValid));
             timer = null;
           }, timeout);
         } else if (this.lazyCheck === undefined) {
-          this.updateInputMessageComponent().then(isValid => isValid);
+          this.updateInputMessageComponent().then(isValid => this.changeIsValid(isValid));
         }
       }
     }
