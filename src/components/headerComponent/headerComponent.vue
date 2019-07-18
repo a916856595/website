@@ -6,11 +6,14 @@
           <router-link tag="li" to="/home" class="fl hover-button">
             <span>首页</span>
           </router-link>
-          <router-link tag="li" to="/register" class="fr hover-button not-mobile">
+          <router-link tag="li" to="/register" class="fr hover-button not-mobile" v-if="!accountInfo">
             <span>注册</span>
           </router-link>
-          <router-link tag="li" to="/login" class="fr hover-button not-mobile">
+          <router-link tag="li" to="/login" class="fr hover-button not-mobile" v-if="!accountInfo">
             <span>登录</span>
+          </router-link>
+          <router-link tag="li" to="/userCenter" class="fr hover-button not-mobile" v-if="accountInfo">
+            <span v-text="accountInfo.nickName"></span>
           </router-link>
           <li class="fr hover-button mobile" @click="toggleSideMenu">
             <i class="icon iconfont iconmenu"></i>
@@ -21,11 +24,14 @@
     <div class="menu-list-row-mask" @click="closeSideMenu()" v-if="isShowSideMenu"></div>
     <div :class="['menu-list-row-box', 'mobile', {'show-side-menu': isShowSideMenu}]">
       <ul class="menu-list-row">
-        <li @click="closeSideMenu('/register')" class="hover-button">
+        <li @click="closeSideMenu('/register')" class="hover-button" v-if="!accountInfo">
           <span>注册</span>
         </li>
-        <li tag="li" @click="closeSideMenu('/login')" class="hover-button">
+        <li tag="li" @click="closeSideMenu('/login')" class="hover-button" v-if="!accountInfo">
           <span>登录</span>
+        </li>
+        <li tag="li" @click="closeSideMenu('/userCenter')" class="hover-button" v-if="accountInfo">
+          <span v-text="accountInfo.nickName"></span>
         </li>
       </ul>
     </div>
@@ -37,7 +43,8 @@ export default {
   name: 'header-component',
   data () {
     return {
-      isShowSideMenu: false
+      isShowSideMenu: false,
+      accountInfo: null
     }
   },
   methods: {
@@ -52,6 +59,16 @@ export default {
   computed: {
     tempAccountInfo () {
       return this.$store.state.tempAccountInfo;
+    }
+  },
+  watch: {
+    tempAccountInfo (newValue) {
+      console.log(newValue)
+      if (newValue && newValue.id && newValue.nickName) {
+        this.accountInfo = newValue;
+      } else {
+        this.accountInfo = null;
+      }
     }
   }
 }
