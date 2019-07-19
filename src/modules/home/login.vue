@@ -39,10 +39,10 @@ export default {
   },
   methods: {
     login (checkEvent) {
-      checkEvent().then((resultObj) => {
+      checkEvent().then(resultObj => {
         this.requestLogin();
-      }, (errorObj) => {
-
+      }).catch(errObj => {
+        
       });
     },
     requestLogin () {

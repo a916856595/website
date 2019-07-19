@@ -27,8 +27,8 @@ export default {
   },
   methods: {
     checkAllChildren () {
-      let vm = this;
-      let promiseArray = [];
+      const vm = this;
+      const promiseArray = [];
       this.fieldIsAllRight = true;
       this.$children
         .filter(item => item.$options.name === 'tip-input')

@@ -37,7 +37,7 @@ export default {
     checkAllField () {
       // TODO 这里应该做递归判断
       if (this.$parent.$options.name === 'tip-input-box'){
-         return this.$parent.checkAllChildren();
+        return this.$parent.checkAllChildren();
       } else {
         throw new Error('tip-input-box must be tip-input-submit father component');
       }

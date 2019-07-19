@@ -109,7 +109,10 @@ export default {
       return new Promise((resolve) => {
         this.isFocused = true;
         this.isChecked = true;
-        this.$children.filter(item => item.$options.name === 'tip-input-message')[0].checkRules().then(isValid => this.changeIsValid(isValid));  //由于是独立组件，直接获取子组件的方法
+        this.$children.filter(item => item.$options.name === 'tip-input-message')[0].checkRules().then(isValid => {
+          this.changeIsValid(isValid);
+          resolve(isValid);
+        });  //由于是独立组件，直接获取子组件的方法
       });
     },
     changeIsValid (isValid) {
