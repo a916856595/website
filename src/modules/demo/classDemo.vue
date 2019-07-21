@@ -1,5 +1,5 @@
 <template>
-  <div class="demo-list-page">
+  <div class="demo-list-page w">
     <ul class="demo-list">
       <li>
         <p class="class-title">按钮类</p>

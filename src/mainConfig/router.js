@@ -1,29 +1,34 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 // 这里暂时不使用动态加载模块了，原因是在 .vue 文件中使用自动加载全局less 配合动态加载会导致less没有被加载
-import home from '../modules/home/home.vue';
-import login from '../modules/home/login.vue';
-import register from '../modules/home/register.vue';
-import classDemo from '../modules/demo/classDemo.vue';
+import homePage from '../modules/home/home.vue';
+import loginPage from '../modules/home/login.vue';
+import registerPage from '../modules/home/register.vue';
+import aboutPage from '../modules/home/about.vue';
+import classDemoPage from '../modules/demo/classDemo.vue';
 
 Vue.use(VueRouter);
 
 const routers = [{
   path: '/login',
   name: 'login',
-  component: login
+  component: loginPage
 },{
   path: '/register',
   name: 'register',
-  component: register
+  component: registerPage
 },{
   path: '/classDemo',
   name: 'classDemo',
-  component: classDemo
+  component: classDemoPage
 },{
   path: '/home',
   name: 'home',
-  component: home
+  component: homePage
+},{
+  path: '/about',
+  name: 'about',
+  component: aboutPage
 },{
   path: '*',
   redirect: '/home'

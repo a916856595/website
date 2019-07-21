@@ -1,15 +1,16 @@
 <template>
   <div class="home-page">
-    <router-link to="/classDemo">类名示例</router-link>
+    <div class="w">
+      <router-link to="/classDemo">类名示例</router-link>
+      <router-link to="/about">关于我</router-link>
+    </div>
   </div>
 </template>
 
 <script>
-import headerComponent from '@components/headerComponent/headerComponent.vue';
+
 export default {
-  components: {
-    headerComponent
-  }
+
 }
 </script>
 
