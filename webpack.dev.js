@@ -55,7 +55,7 @@ var config = {
       exclude: /node_modules/
     }, {
       test: /\.(gif|jpg|png)\??.*$/,
-      loader: 'url-loader?limit=1024'
+      loader: 'url-loader?limit=1024&name=static/images/[name].[ext]'
     }, {
       test: /\.(woff|woff2|svg|eot|ttf)\??.*$/,
       loader: 'file-loader'
@@ -65,7 +65,8 @@ var config = {
     extensions: ['.js', '.vue', '.json'],
     // 这里配置引用文件路径的别名
     alias: {
-        '@components': path.resolve(__dirname, 'src/components')
+        '@components': path.resolve(__dirname, 'src/components'),
+        '@static': path.resolve(__dirname, 'static'),
     }
   },
   plugins: [

@@ -13,6 +13,8 @@ import dialog from './src/mainConfig/dialog.js';
 import axiosInstance from './src/mainConfig/request.js';
 import methodsConstructor from './src/lib/easy.js';
 
+require.context('./static', true, /\.*$/);
+
 Vue.prototype.$request = axiosInstance.axiosInstance; //普通请求
 Vue.prototype.$tipRequest = axiosInstance.tipAxiosInstance; //带加载提示的请求
 Vue.prototype.$dialog = dialog;
