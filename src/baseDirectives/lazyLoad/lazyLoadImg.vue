@@ -53,7 +53,10 @@ function computeSpacing(ele) {
 function changeImageSrc(ele) {
   const imageToLoad = new Image();
   imageToLoad.addEventListener('load', () => {
-    ele.src = ele.loadUrl;
+    ele.src = imageToLoad.src;
+  });
+  imageToLoad.addEventListener('error', () => {
+    ele.src = '/static/images/loadFail.png';
   });
   imageToLoad.src = ele.loadUrl;
 }
