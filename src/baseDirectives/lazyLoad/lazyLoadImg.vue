@@ -1,63 +1,20 @@
 <script>
+//<img src="../../../static/images/placeholder.png" v-lazy-load="imgList[index]" alt="">
+// params x 只监听X轴 y 只监听Y轴 xy或无参 监听XY轴
+import initLazyLoadImgElement from './lazyLoadImg.js'
+
 export default {
   name: 'lazy-load',
   bind (ele, bindings) {
-    ele.timer = null;
-    ele.isChanged = false;
-    ele.loadUrl = bindings.value;
-    ele.__scrollEvent__ = () => {
-      setTimer(ele);
-    }
-    ele.__loadEvent__ = () => {
-      computeSpacing(ele);
-      if (!ele.isChanged) addScrollListener(ele);
-      ele.removeEventListener('load', ele.__loadEvent__);
-    }
-    ele.addEventListener('load', ele.__loadEvent__);
+    ele = initLazyLoadImgElement(ele, bindings);
+    ele.addLazyLoadEvent();
+  },
+  update (ele, bindings) {
+    ele.removeLazyLoadEvent();
+    ele.updateLazyLoadEvent(bindings);
   },
   unbind(ele) {
-    removeScrollListener(ele);
+    ele.removeLazyLoadEvent();
   }
-}
-
-function setTimer(ele) {
-  if (ele.timer) {ele.removeEventListener('load', ele.__loadEvent__);
-    clearTimeout(ele.timer);
-    ele.timer = null;
-  }
-  ele.timer = setTimeout(() => {
-    computeSpacing(ele);
-    clearTimeout(ele.timer);
-    ele.timer = null;
-  }, 200);
-}
-
-function addScrollListener(ele) {
-  if (!ele.isChanged) document.addEventListener('scroll', ele.__scrollEvent__);
-}
-
-function removeScrollListener(ele) {
-  document.removeEventListener('scroll', ele.__scrollEvent__);
-}
-
-function computeSpacing(ele) {
-  const clientHeight = document.documentElement.clientHeight;
-  const elementHeightToTop = ele.getBoundingClientRect().y;
-  if (elementHeightToTop - clientHeight <= 0) {
-    ele.isChanged = true;
-    changeImageSrc(ele);
-    removeScrollListener(ele);
-  }
-}
-
-function changeImageSrc(ele) {
-  const imageToLoad = new Image();
-  imageToLoad.addEventListener('load', () => {
-    ele.src = imageToLoad.src;
-  });
-  imageToLoad.addEventListener('error', () => {
-    ele.src = '/static/images/loadFail.png';
-  });
-  imageToLoad.src = ele.loadUrl;
 }
 </script>
