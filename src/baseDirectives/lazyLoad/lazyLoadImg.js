@@ -85,7 +85,7 @@ function computeYIsCanShow(ele) {
 }
 
 function getElementXSpacing(ele) {
-  if (ele.getBoundingClientRect) return ele.getBoundingClientRect().x;
+  if (ele.getBoundingClientRect) return ele.getBoundingClientRect().left;
   let totalWidth = ele.offsetLeft;
   let currentNode = ele.offsetParent;
   let documentScrollLeft = document.documentElement.scrollLeft || document.body.scrollLeft;
@@ -97,7 +97,7 @@ function getElementXSpacing(ele) {
 }
 
 function getElementYSpacing(ele) {
-  if (ele.getBoundingClientRect) return ele.getBoundingClientRect().y;  //dom.getBoundingClientRect存在兼容性问题(当前发现uc不支持)，通过元素到顶部的距离减去页面卷曲的高度获取当前元素的位置
+  if (ele.getBoundingClientRect) return ele.getBoundingClientRect().top;  //dom.getBoundingClientRect存在兼容性问题(当前发现uc不支持)，通过元素到顶部的距离减去页面卷曲的高度获取当前元素的位置
   let totalHeight = ele.offsetTop;
   let currentNode = ele.offsetParent;
   let documentScrollTop = document.documentElement.scrollTop || document.body.scrollTop;

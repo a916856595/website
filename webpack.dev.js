@@ -7,7 +7,7 @@ var config = {
   mode: 'development',
   devtool: 'cheap-module-source-map',
   entry: {
-    main: path.join(__dirname, 'main.js')
+    main: ['babel-polyfill', path.join(__dirname, 'main.js')]
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
